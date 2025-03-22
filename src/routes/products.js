@@ -1,47 +1,59 @@
-import express from "express";
-import Product from "../models/Product.js";
-import { adminAuth } from "../middleware/auth.js";
-import { readFileSync } from "fs";
-import { fileURLToPath } from "url";
-import { dirname, join } from "path";
 
+const express = require('express');
 const router = express.Router();
+const Product = require('../models/Product');
 
-// Get directory path
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-// Read products JSON file
-const productsJSON = JSON.parse(
-  readFileSync(join(__dirname, "../data/products.json"), "utf8")
-);
-
-// Get all products
-router.get("/", async (req, res) => {
-  try {
-    //! DONT USE IN PRODUCTION get products from json file
-    res.json(productsJSON);
-    return;
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-//TODO Get single product
-
-// Create product (admin only)
-router.post("/", adminAuth, async (req, res) => {
+//Skapa ny produkt
+router.post('/', async (req, res) => {
   try {
     const product = new Product(req.body);
     await product.save();
     res.status(201).json(product);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
   }
 });
 
-//TODO Update product (admin only)
+//Hämta alla produkter
+router.get('/', async (req, res) => {
+  try {
+    const products = await Product.find();
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
-//TODO Delete product (admin only)
+//Hämta en specifik produkt
+router.get('/:id', async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) return res.status(404).json({ message: 'Produkt hittades inte' });
+    res.json(product);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
-export default router;
+//Uppdatera en produkt
+router.put('/:id', async (req, res) => {
+  try {
+    const updated = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(updated);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+//Ta bort en produkt
+router.delete('/:id', async (req, res) => {
+  try {
+    await Product.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Produkt raderad' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+module.exports = router;
+

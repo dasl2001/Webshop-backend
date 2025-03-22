@@ -1,7 +1,13 @@
-import mongoose from 'mongoose';
+// models/Product.js
+const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema({
   name: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  description: {
     type: String,
     required: true,
     trim: true
@@ -11,17 +17,27 @@ const productSchema = new mongoose.Schema({
     required: true,
     min: 0
   },
-  description: {
+  /*
+  // Implementera senare vid tid
+  imageUrl: {
     type: String,
-    default: ''
+    required: false // Bild är valfri, men rekommenderad
   },
-  stock: {
+  */
+  category: {
+    type: String,
+    required: true
+  },
+  inStock: {
     type: Number,
-    default: 0,
+    required: true,
     min: 0
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
   }
-}, {
-  timestamps: true
 });
 
-export default mongoose.model('Product', productSchema);
+module.exports = mongoose.model('Product', productSchema);
+
