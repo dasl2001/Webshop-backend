@@ -1,4 +1,3 @@
-// models/category.model.js
 import mongoose from "mongoose";
 
 const kategoriSchema = new mongoose.Schema({
