@@ -9,7 +9,7 @@ const adminCheck = (req, res, next) => {
   if (user && user.isAdmin) { 
     next();
   } else {
-    res.status(403).json({ message: 'Endast administratörer har behörighet' });
+    res.status(403).json({ message: 'Endast admin har behörighet' });
   }
 };
 
