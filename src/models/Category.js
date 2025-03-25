@@ -1,4 +1,5 @@
-const mongoose = require('mongoose');
+// models/category.model.js
+import mongoose from "mongoose";
 
 const kategoriSchema = new mongoose.Schema({
   namn: {
@@ -18,4 +19,6 @@ const kategoriSchema = new mongoose.Schema({
   timestamps: true
 });
 
-module.exports = mongoose.model('Kategori', kategoriSchema);
+const Kategori = mongoose.model("Kategori", kategoriSchema);
+export default Kategori;
+
