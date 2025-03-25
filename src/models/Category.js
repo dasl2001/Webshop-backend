@@ -1,23 +1,27 @@
+// models/Category.js
 import mongoose from "mongoose";
 
-const kategoriSchema = new mongoose.Schema({
-  namn: {
-    type: String,
-    required: true,
-    trim: true
+const categorySchema = new mongoose.Schema(
+  {
+    name: { 
+      type: String, 
+      required: true, 
+      unique: true, 
+      trim: true 
+    },
+    description: { 
+      type: String, 
+      trim: true 
+    },
+    type: { 
+      type: String, 
+      trim: true 
+    },
   },
-  beskrivning: {
-    type: String,
-    trim: true
-  },
-  typ: {
-    type: String,
-    trim: true
-  }
-}, {
-  timestamps: true
-});
+  { timestamps: true }
+);
 
-const Kategori = mongoose.model("Kategori", kategoriSchema);
-export default Kategori;
+const Category = mongoose.model("Category", categorySchema);
+export default Category;
+
 

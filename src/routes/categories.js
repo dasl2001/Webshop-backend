@@ -1,3 +1,4 @@
+// routes/categories.js
 import express from "express";
 import Category from "../models/Category.js";
 
@@ -5,7 +6,7 @@ const router = express.Router();
 
 router.post("/", async (req, res) => {
   try {
-    const newCategory = await new Category(req.body);
+    const newCategory = new Category(req.body);
     await newCategory.save();
     res.status(201).json({ success: true, data: newCategory });
   } catch (error) {
@@ -13,7 +14,6 @@ router.post("/", async (req, res) => {
   }
 });
 
-// uppdatera befintlig kategori
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -37,7 +37,6 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// ta bort en befintlig kategori
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -50,6 +49,16 @@ router.delete("/:id", async (req, res) => {
     res.status(200).json({ message: "Category deleted successfully" });
   } catch (error) {
     console.error("Error deleting category:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.get("/", async (req, res) => {
+  try {
+    // Om du vill lägga till sökning, lägg till filter här
+    const categories = await Category.find();
+    res.json(categories);
+  } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
