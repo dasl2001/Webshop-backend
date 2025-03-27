@@ -1,26 +1,13 @@
-import express from 'express';
-import jwt from 'jsonwebtoken';
-import User from '../models/User.js';
+const Express = require("express");
 
-const router = express.Router();
+const {
+  getCategories,
+  addCategory,
+} = require("../controllers/category.controller");
 
-// Register
-router.post('/register', async (req, res) => {
-  try {
-    const user = new User(req.body);
-    await user.save();
-    
-    const token = jwt.sign(
-      { id: user._id, isAdmin: user.isAdmin },
-      process.env.JWT_SECRET || 'your-secret-key'
-    );
-    
-    res.status(201).json({ user, token });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
+const categoriesRouter = Express.Router();
 
-//TODO Login
+categoriesRouter.get("/", getCategories);
+categoriesRouter.post("/new", addCategory);
 
-export default router;
+module.exports = categoriesRouter;
