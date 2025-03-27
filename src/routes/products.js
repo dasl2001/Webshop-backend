@@ -58,12 +58,23 @@ router.put("/:id", adminAuth, async (req, res) => {
   }
 });
 
-// Delete product (admin only) – implementation kan läggas till senare
-// router.delete("/:id", adminAuth, async (req, res) => { ... });
+// Delete product (admin only)
+router.delete("/:id", adminAuth, async (req, res) => {
+  const { id } = req.params;
 
-router.post("/import/", async (req, res) => {
-  await Product.insertMany(req.body)
-  res.json("Products imported")
-})
+  try {
+    const deletedProduct = await Product.findByIdAndDelete(id);
+
+    if (!deletedProduct) {
+      return res.status(404).json({ error: "Produkten hittades inte" });
+    }
+
+    res.json({ message: "Produkten raderades", product: deletedProduct });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
 
 export default router;
