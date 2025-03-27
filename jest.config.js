@@ -1,8 +1,9 @@
 export default {
-  testEnvironment: "node",
   transform: {
-    "^.+\\.js$": "babel-jest",
+    "^.+\\.js$": "babel-jest"
   },
-  testMatch: ["**/__tests__/**/*.test.js"],
-  setupFilesAfterEnv: ["./jest.setup.js"],
+  testEnvironment: "node",
+  verbose: true,
+  roots: ["<rootDir>/src"]
 };
+

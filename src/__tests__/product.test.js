@@ -1,35 +1,66 @@
 import mongoose from "mongoose";
-import Product from "../models/Product.js";
+import { MongoMemoryServer } from "mongodb-memory-server";
+import Product from "../models/Product.js";  
+import Category from "../models/Category.js";
+
+jest.setTimeout(10000); 
+
+let mongo;
+
+beforeAll(async () => {
+  mongo = await MongoMemoryServer.create();
+  await mongoose.connect(mongo.getUri(), {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+});
+
+afterAll(async () => {
+  await mongoose.connection.close();
+  await mongo.stop();
+});
+
+beforeEach(async () => {
+  await Product.deleteMany();
+  await Category.deleteMany();
+});
 
 describe("Product Model Test", () => {
-  afterAll(async () => {
-    // Remove all products from the database
-    await Product.deleteMany({
-      name: {
-        $regex: "%%TEST%%",
-      },
-    });
-    await mongoose.connection.close();
-  });
-
   it("should create & save product successfully", async () => {
-    const validProduct = new Product({
-      name: "Test Product: %%TEST%%",
-      price: 9.99,
-      description: "Test Description",
-      stock: 10,
+    const category = await Category.create({
+      name: "TestKategori",
+      description: "Testbeskrivning",
+      type: "Test",
     });
+
+    const validProduct = new Product({
+      name: "TestProdukt",
+      price: 29.99,
+      description: "God produkt",
+      stock: 10,
+      category: category._id,
+    });
+
     const savedProduct = await validProduct.save();
 
     expect(savedProduct._id).toBeDefined();
-    expect(savedProduct.name).toBe(validProduct.name);
-    expect(savedProduct.price).toBe(validProduct.price);
-    expect(savedProduct.stock).toBe(validProduct.stock);
+    expect(savedProduct.name).toBe("TestProdukt");
+    expect(savedProduct.category.toString()).toBe(category._id.toString());
   });
 
   it("should fail to save product without required fields", async () => {
-    // TODO: Implement this and other tests
-    const err = new Error("Test Error");
-    expect(err).toBeInstanceOf(mongoose.Error.ValidationError);
+    const product = new Product({ price: 15.5 });
+
+    let error;
+    try {
+      await product.save();
+    } catch (err) {
+      error = err;
+    }
+
+    expect(error).toBeInstanceOf(mongoose.Error.ValidationError);
+    expect(error.errors.name).toBeDefined();
+    expect(error.errors.category).toBeDefined();
   });
 });
+
