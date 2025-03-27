@@ -61,4 +61,9 @@ router.put("/:id", adminAuth, async (req, res) => {
 // Delete product (admin only) – implementation kan läggas till senare
 // router.delete("/:id", adminAuth, async (req, res) => { ... });
 
+router.post("/import/", async (req, res) => {
+  await Product.insertMany(req.body)
+  res.json("Products imported")
+})
+
 export default router;
