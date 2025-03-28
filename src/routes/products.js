@@ -1,3 +1,4 @@
+// routes/products.js
 import express from "express";
 import mongoose from "mongoose";
 import Product from "../models/Product.js";
@@ -6,37 +7,13 @@ import { adminAuth } from "../middleware/auth.js";
 
 const router = express.Router();
 
-// Hämta alla produkter
-router.get("/", async (req, res) => {
-  try {
-    const products = await Product.find().populate("category");
-    res.json(products);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Hämta en produkt med ID
-router.get("/:id", async (req, res) => {
-  const { id } = req.params;
-  try {
-    const product = await Product.findById(id).populate("category");
-    if (!product)
-      return res.status(404).json({ error: "Produkt hittades inte" });
-    res.json(product);
-  } catch (error) {
-    console.warn("Failed to fetch product", error);
-    res.status(404).json({ error: "Product not found" });
-  }
-});
-
-// 🔍 Sök produkter
+// 🔍 Sökprodukter – placeras först
 router.get("/search", async (req, res) => {
   const { q, category, minPrice, maxPrice, sortBy = "name", order = "asc" } = req.query;
 
   const filter = {};
 
-  // Textsökning
+  // Textsökning i namn eller beskrivning
   if (q) {
     const regex = new RegExp(q, "i");
     filter.$or = [
@@ -52,7 +29,7 @@ router.get("/search", async (req, res) => {
     if (maxPrice) filter.price.$lte = parseFloat(maxPrice);
   }
 
-  // Kategori (id eller namn)
+  // Kategori via id eller namn
   if (category) {
     if (mongoose.Types.ObjectId.isValid(category)) {
       filter.category = category;
@@ -79,7 +56,30 @@ router.get("/search", async (req, res) => {
   }
 });
 
-// Skapa ny produkt
+// 🔹 Hämta alla produkter
+router.get("/", async (req, res) => {
+  try {
+    const products = await Product.find().populate("category");
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 🔹 Hämta en specifik produkt
+router.get("/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const product = await Product.findById(id).populate("category");
+    if (!product)
+      return res.status(404).json({ error: "Produkt hittades inte" });
+    res.json(product);
+  } catch (error) {
+    res.status(404).json({ error: "Product not found" });
+  }
+});
+
+// ➕ Skapa ny produkt (admin)
 router.post("/", adminAuth, async (req, res) => {
   try {
     const product = new Product(req.body);
@@ -90,7 +90,7 @@ router.post("/", adminAuth, async (req, res) => {
   }
 });
 
-// Uppdatera produkt
+// ✏️ Uppdatera produkt (admin)
 router.put("/:id", adminAuth, async (req, res) => {
   const { id } = req.params;
   try {
@@ -104,12 +104,11 @@ router.put("/:id", adminAuth, async (req, res) => {
     }
     res.json(updatedProduct);
   } catch (error) {
-    console.warn("Error updating product", error);
     res.status(400).json({ error: error.message });
   }
 });
 
-// Radera produkt
+// 🗑️ Radera produkt (admin)
 router.delete("/:id", adminAuth, async (req, res) => {
   const { id } = req.params;
   try {
@@ -124,4 +123,5 @@ router.delete("/:id", adminAuth, async (req, res) => {
 });
 
 export default router;
+
 
