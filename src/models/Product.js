@@ -27,12 +27,11 @@ const productSchema = new mongoose.Schema(
       ref: "Category",
       required: true,
     },
-    /*Implementera vid tid
+    //Implementera vid tid
     imageUrl: {
       type: String,
       required: true,
-    },*/
-  
+    },
   },
   { timestamps: true }
 );
