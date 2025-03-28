@@ -7,7 +7,7 @@ import { adminAuth } from "../middleware/auth.js";
 
 const router = express.Router();
 
-// 🔍 Sökprodukter – placeras först
+//Sökprodukter – placeras först
 router.get("/search", async (req, res) => {
   const { q, category, minPrice, maxPrice, sortBy = "name", order = "asc" } = req.query;
 
@@ -56,7 +56,7 @@ router.get("/search", async (req, res) => {
   }
 });
 
-// 🔹 Hämta alla produkter
+//Hämta alla produkter
 router.get("/", async (req, res) => {
   try {
     const products = await Product.find().populate("category");
@@ -66,7 +66,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// 🔹 Hämta en specifik produkt
+//Hämta en specifik produkt
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
   try {
@@ -79,7 +79,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// ➕ Skapa ny produkt (admin)
+//Skapa ny produkt (admin)
 router.post("/", adminAuth, async (req, res) => {
   try {
     const product = new Product(req.body);
@@ -90,7 +90,7 @@ router.post("/", adminAuth, async (req, res) => {
   }
 });
 
-// ✏️ Uppdatera produkt (admin)
+//Uppdatera produkt (admin)
 router.put("/:id", adminAuth, async (req, res) => {
   const { id } = req.params;
   try {
@@ -108,7 +108,7 @@ router.put("/:id", adminAuth, async (req, res) => {
   }
 });
 
-// 🗑️ Radera produkt (admin)
+//Radera produkt (admin)
 router.delete("/:id", adminAuth, async (req, res) => {
   const { id } = req.params;
   try {
@@ -123,5 +123,4 @@ router.delete("/:id", adminAuth, async (req, res) => {
 });
 
 export default router;
-
 
