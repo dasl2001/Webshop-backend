@@ -1,43 +1,71 @@
 import express from "express";
-import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 import User from "../models/User.js";
 
 const router = express.Router();
 
-//Login
-router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-
+//POST /api/auth/register
+router.post("/register", async (req, res) => {
   try {
-    const user = await User.findOne({ email });
-    if (!user) return res.status(401).json({ error: "Fel e-post eller lösenord" });
+    const { username, email, password } = req.body;
 
-    const match = await bcrypt.compare(password, user.password);
-    if (!match) return res.status(401).json({ error: "Fel e-post eller lösenord" });
+    if (!username || !email || !password) {
+      return res.status(400).json({ error: "Alla fält krävs" });
+    }
 
-    const token = jwt.sign(
-      { id: user._id, admin: user.admin },
-      process.env.JWT_SECRET,
-      { expiresIn: "2h" }
-    );
+    const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+    if (existingUser) {
+      return res.status(400).json({ error: "Användarnamn eller e-post används redan" });
+    }
 
-    res.json({ token });
+    const user = new User({ username, email, password });
+    await user.save();
+
+    res.status(201).json({ message: "Användare skapad" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-//Skapa ny användare 
-router.post("/register", async (req, res) => {
+//POST /api/auth/login (med username eller email)
+router.post("/login", async (req, res) => {
   try {
-    const { email, password, admin = false } = req.body;
-    const newUser = new User({ email, password, admin });
-    await newUser.save();
-    res.status(201).json({ message: "Användare skapad" });
+    const { identifier, password } = req.body;
+
+    if (!identifier || !password) {
+      return res.status(400).json({ error: "Fyll i användarnamn/e-post och lösenord" });
+    }
+
+    const user = await User.findOne({
+      $or: [{ email: identifier }, { username: identifier }]
+    });
+
+    if (!user) {
+      return res.status(401).json({ error: "Fel användarnamn eller e-post" });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(401).json({ error: "Fel lösenord" });
+    }
+
+    const token = jwt.sign(
+      {
+        id: user._id,
+        email: user.email,
+        admin: user.admin,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "2h" }
+    );
+
+    res.json({ token, user: { username: user.username, email: user.email, admin: user.admin } });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 });
 
 export default router;
+
