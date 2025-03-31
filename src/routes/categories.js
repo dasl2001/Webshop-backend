@@ -1,9 +1,9 @@
-// routes/categories.js
 import express from "express";
 import Category from "../models/Category.js";
 
 const router = express.Router();
 
+// Skapa ny kategori
 router.post("/", async (req, res) => {
   try {
     const newCategory = new Category(req.body);
@@ -14,6 +14,7 @@ router.post("/", async (req, res) => {
   }
 });
 
+// Uppdatera kategori
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -37,6 +38,7 @@ router.put("/:id", async (req, res) => {
   }
 })
 
+// Radera kategori
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -53,9 +55,9 @@ router.delete("/:id", async (req, res) => {
   }
 })
 
+// Hämta alla kategorier
 router.get("/", async (req, res) => {
   try {
-    // Om du vill lägga till sökning, lägg till filter här
     const categories = await Category.find();
     res.json(categories);
   } catch (error) {
@@ -63,4 +65,18 @@ router.get("/", async (req, res) => {
   }
 });
 
+// ✅ Hämta en specifik kategori via ID
+router.get("/:id", async (req, res) => {
+  try {
+    const category = await Category.findById(req.params.id);
+    if (!category) {
+      return res.status(404).json({ error: "Kategorin hittades inte" });
+    }
+    res.json(category);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 export default router;
+
