@@ -1,4 +1,3 @@
-// routes/products.js
 import express from "express";
 import mongoose from "mongoose";
 import Product from "../models/Product.js";
@@ -7,19 +6,31 @@ import { adminAuth } from "../middleware/auth.js";
 
 const router = express.Router();
 
-//Sökprodukter – placeras först
+//Sökprodukter – måste placeras före "/:id"
 router.get("/search", async (req, res) => {
-  const { q, category, minPrice, maxPrice, sortBy = "name", order = "asc" } = req.query;
+  const { q, minPrice, maxPrice, sortBy = "name", order = "asc" } = req.query;
 
   const filter = {};
 
-  // Textsökning i namn eller beskrivning
+  //Textsökning i namn, beskrivning eller kategori-namn
+  let categoryMatch = null;
   if (q) {
     const regex = new RegExp(q, "i");
+
+    //Leta upp matchande kategori
+    const foundCategory = await Category.findOne({ name: { $regex: regex } });
+    if (foundCategory) {
+      categoryMatch = foundCategory._id;
+    }
+
     filter.$or = [
       { name: { $regex: regex } },
       { description: { $regex: regex } }
     ];
+
+    if (categoryMatch) {
+      filter.$or.push({ category: categoryMatch });
+    }
   }
 
   // Prisintervall
@@ -27,19 +38,6 @@ router.get("/search", async (req, res) => {
     filter.price = {};
     if (minPrice) filter.price.$gte = parseFloat(minPrice);
     if (maxPrice) filter.price.$lte = parseFloat(maxPrice);
-  }
-
-  // Kategori via id eller namn
-  if (category) {
-    if (mongoose.Types.ObjectId.isValid(category)) {
-      filter.category = category;
-    } else {
-      const foundCategory = await Category.findOne({ name: category });
-      if (!foundCategory) {
-        return res.status(404).json({ error: `Kategorin '${category}' hittades inte.` });
-      }
-      filter.category = foundCategory._id;
-    }
   }
 
   const sort = {};
@@ -56,7 +54,7 @@ router.get("/search", async (req, res) => {
   }
 });
 
-//Hämta alla produkter
+// Hämta alla produkter
 router.get("/", async (req, res) => {
   try {
     const products = await Product.find().populate("category");
@@ -66,7 +64,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-//Hämta en specifik produkt
+// Hämta en specifik produkt
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
   try {
@@ -79,7 +77,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-//Skapa ny produkt (admin)
+// Skapa ny produkt (admin)
 router.post("/", adminAuth, async (req, res) => {
   try {
     const product = new Product(req.body);
@@ -90,7 +88,7 @@ router.post("/", adminAuth, async (req, res) => {
   }
 });
 
-//Uppdatera produkt (admin)
+// Uppdatera produkt (admin)
 router.put("/:id", adminAuth, async (req, res) => {
   const { id } = req.params;
   try {
@@ -108,7 +106,7 @@ router.put("/:id", adminAuth, async (req, res) => {
   }
 });
 
-//Radera produkt (admin)
+// Radera produkt (admin)
 router.delete("/:id", adminAuth, async (req, res) => {
   const { id } = req.params;
   try {
@@ -123,4 +121,5 @@ router.delete("/:id", adminAuth, async (req, res) => {
 });
 
 export default router;
+
 

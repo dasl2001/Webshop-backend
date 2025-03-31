@@ -1,10 +1,11 @@
 import express from "express";
 import Category from "../models/Category.js";
+import { adminAuth } from "../middleware/auth.js"; 
 
 const router = express.Router();
 
-// Skapa ny kategori
-router.post("/", async (req, res) => {
+// Skapa ny kategori (endast admin)
+router.post("/", adminAuth, async (req, res) => {
   try {
     const newCategory = new Category(req.body);
     await newCategory.save();
@@ -14,8 +15,8 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Uppdatera kategori
-router.put("/:id", async (req, res) => {
+// Uppdatera kategori (endast admin)
+router.put("/:id", adminAuth, async (req, res) => {
   try {
     const { id } = req.params;
     const categoryData = { ...req.body };
@@ -38,24 +39,24 @@ router.put("/:id", async (req, res) => {
   }
 })
 
-// Radera kategori
-router.delete("/:id", async (req, res) => {
+// Radera kategori (endast admin)
+router.delete("/:id", adminAuth, async (req, res) => {
   try {
     const { id } = req.params;
 
-    const deletedCategory = await Category.findByIdAndDelete(id)
+    const deletedCategory = await Category.findByIdAndDelete(id);
 
     if (!deletedCategory) {
       return res.status(404).json({ error: "Category not found" })
     }
-    res.status(200).json({ message: "Category deleted successfully" })
+    res.status(200).json({ message: "Category deleted successfully" });
   } catch (error) {
     console.error("Error deleting category:", error)
     res.status(500).json({ error: error.message })
   }
 })
 
-// Hämta alla kategorier
+// Hämta alla kategorier (öppen för alla)
 router.get("/", async (req, res) => {
   try {
     const categories = await Category.find();
@@ -65,7 +66,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// ✅ Hämta en specifik kategori via ID
+// Hämta en specifik kategori (öppen för alla)
 router.get("/:id", async (req, res) => {
   try {
     const category = await Category.findById(req.params.id);
@@ -79,4 +80,5 @@ router.get("/:id", async (req, res) => {
 });
 
 export default router;
+
 
