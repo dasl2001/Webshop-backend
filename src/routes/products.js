@@ -33,7 +33,7 @@ router.get("/search", async (req, res) => {
     }
   }
 
-  // Prisintervall
+  //Prisintervall
   if (minPrice || maxPrice) {
     filter.price = {};
     if (minPrice) filter.price.$gte = parseFloat(minPrice);
@@ -54,7 +54,7 @@ router.get("/search", async (req, res) => {
   }
 });
 
-// Hämta alla produkter
+//Hämta alla produkter
 router.get("/", async (req, res) => {
   try {
     const products = await Product.find().populate("category");
@@ -64,7 +64,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Hämta en specifik produkt
+//Hämta en specifik produkt
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
   try {
@@ -73,11 +73,11 @@ router.get("/:id", async (req, res) => {
       return res.status(404).json({ error: "Produkt hittades inte" });
     res.json(product);
   } catch (error) {
-    res.status(404).json({ error: "Product not found" });
+    res.status(404).json({ error: "Produkt hittades inte" });
   }
 });
 
-// Skapa ny produkt (admin)
+//Skapa ny produkt (admin)
 router.post("/", adminAuth, async (req, res) => {
   try {
     const product = new Product(req.body);
@@ -88,7 +88,7 @@ router.post("/", adminAuth, async (req, res) => {
   }
 });
 
-// Uppdatera produkt (admin)
+//Uppdatera produkt (admin)
 router.put("/:id", adminAuth, async (req, res) => {
   const { id } = req.params;
   try {
@@ -98,7 +98,7 @@ router.put("/:id", adminAuth, async (req, res) => {
       { new: true }
     );
     if (!updatedProduct) {
-      return res.status(404).json({ error: "Produkt att uppdatera hittades inte" });
+      return res.status(404).json({ error: "Kunde inte hitta produkten att uppdatera" });
     }
     res.json(updatedProduct);
   } catch (error) {
@@ -106,7 +106,7 @@ router.put("/:id", adminAuth, async (req, res) => {
   }
 });
 
-// Radera produkt (admin)
+//Radera produkt (admin)
 router.delete("/:id", adminAuth, async (req, res) => {
   const { id } = req.params;
   try {
@@ -114,7 +114,7 @@ router.delete("/:id", adminAuth, async (req, res) => {
     if (!deletedProduct) {
       return res.status(404).json({ error: "Produkten hittades inte" });
     }
-    res.json({ message: "Produkten raderades", product: deletedProduct });
+    res.json({ message: "Produkt raderad", product: deletedProduct });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
