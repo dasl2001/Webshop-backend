@@ -1,135 +1,37 @@
-/*
-Importering av moduler
-*/
-import express from "express";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
-import User from "../models/User.js";
+// middleware/auth.js
+import jwt from 'jsonwebtoken';
 
-const router = express.Router();
+export const auth = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) return res.status(401).json({ error: "Ingen token skickad" });
 
-/*
-Registrering – skapar ny användare
-*/
-router.post("/register", async (req, res) => {
+  const token = authHeader.split(" ")[1];
+
   try {
-    const { username, email, password } = req.body;
-
-    if (!username || !email || !password) {
-      return res.status(400).json({ error: "Alla fält krävs" });
-    }
-
-    const existingUser = await User.findOne({ $or: [{ email }, { username }] });
-    if (existingUser) {
-      return res.status(400).json({ error: "Användarnamn eller e-post används redan" });
-    }
-
-    const user = new User({ username, email, password });
-    await user.save();
-
-    res.status(201).json({ message: "Användare skapad" });
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(401).json({ error: "Ogiltig token" });
   }
-});
+};
 
-/*
-Endast admin-login – kräver att användaren har admin: true
-*/
-router.post("/login", async (req, res) => {
+export const adminAuth = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) return res.status(401).json({ error: "Ingen token skickad" });
+
+  const token = authHeader.split(" ")[1];
+
   try {
-    const { identifier, password } = req.body;
-
-    if (!identifier || !password) {
-      return res.status(400).json({ error: "Fyll i användarnamn/e-post och lösenord" });
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (!decoded.admin) {
+      return res.status(403).json({ error: "Endast administratörer har åtkomst" });
     }
-
-    const user = await User.findOne({
-      $or: [{ email: identifier }, { username: identifier }]
-    });
-
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-      return res.status(401).json({ error: "Fel användarnamn eller lösenord" });
-    }
-
-    if (!user.admin) {
-      return res.status(403).json({ error: "Otillräckliga rättigheter" });
-    }
-
-    //Uppdatera senaste inloggning
-    user.lastLogin = new Date();
-    await user.save();
-
-    const token = jwt.sign(
-      { id: user._id, email: user.email, admin: user.admin },
-      process.env.JWT_SECRET,
-      { expiresIn: "2h" }
-    );
-
-    res.json({
-      message: "Välkommen admin",
-      token,
-      user: {
-        username: user.username,
-        email: user.email,
-        admin: user.admin,
-        lastLogin: user.lastLogin
-      }
-    });
+    req.user = decoded;
+    next();
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(401).json({ error: "Ogiltig token" });
   }
-});
+};
 
-/*
-Login för vanliga användare:
-Tillåter endast icke-admin användare
-*/
-router.post("/login-user", async (req, res) => {
-  try {
-    const { identifier, password } = req.body;
-
-    if (!identifier || !password) {
-      return res.status(400).json({ error: "Fyll i användarnamn/e-post och lösenord" });
-    }
-
-    const user = await User.findOne({
-      $or: [{ email: identifier }, { username: identifier }]
-    });
-
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-      return res.status(401).json({ error: "Fel användarnamn eller lösenord" });
-    }
-
-    //Blockera admin från att logga in via denna route
-    if (user.admin) {
-      return res.status(403).json({ error: "Endast vanliga användare har åtkomst här" });
-    }
-
-    //Uppdatera senaste inloggning
-    user.lastLogin = new Date();
-    await user.save();
-
-    const token = jwt.sign(
-      { id: user._id, email: user.email, admin: user.admin },
-      process.env.JWT_SECRET,
-      { expiresIn: "2h" }
-    );
-
-    res.json({
-      message: "Välkommen användare",
-      token,
-      user: {
-        username: user.username,
-        email: user.email,
-        admin: user.admin,
-        lastLogin: user.lastLogin
-      }
-    });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-export default router;
 
