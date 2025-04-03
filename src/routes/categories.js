@@ -1,6 +1,7 @@
 import express from "express";
 import Category from "../models/Category.js";
-import { adminAuth } from "../middleware/auth.js"; 
+import Product from "../models/Product.js"; 
+import { adminAuth } from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -56,7 +57,7 @@ router.delete("/:id", adminAuth, async (req, res) => {
   }
 });
 
-// Hämta alla kategorier (öppen för alla)
+//Hämta alla kategorier
 router.get("/", async (req, res) => {
   try {
     const categories = await Category.find();
@@ -66,7 +67,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Hämta en specifik kategori (öppen för alla)
+//Hämta en specifik kategori via ID (öppen för alla)
 router.get("/:id", async (req, res) => {
   try {
     const category = await Category.findById(req.params.id);
@@ -79,6 +80,29 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+//Hämta produkter i en viss kategori via namn
+router.get("/:categoryName/products", async (req, res) => {
+  try {
+    const { categoryName } = req.params;
+
+    const category = await Category.findOne({
+      name: { $regex: new RegExp(categoryName, "i") }
+    });
+
+    if (!category) {
+      return res.status(404).json({ error: "Kategorin hittades inte" });
+    }
+
+    const products = await Product.find({ category: category._id }).populate("category");
+
+    res.status(200).json(products);
+  } catch (error) {
+    console.error("Fel vid hämtning av produkter för kategori:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 export default router;
+
 
 
