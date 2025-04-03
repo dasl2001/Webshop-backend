@@ -67,7 +67,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-//Hämta en specifik kategori via ID (öppen för alla)
+//Hämta kategori via ID
 router.get("/:id", async (req, res) => {
   try {
     const category = await Category.findById(req.params.id);
@@ -80,11 +80,17 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-//Hämta produkter i en viss kategori via namn
+//Hämta produkter via kategorinamn
 router.get("/:categoryName/products", async (req, res) => {
   try {
     const { categoryName } = req.params;
 
+    //Kontroll om söktermen saknas
+    if (!categoryName || categoryName.trim() === "") {
+      return res.status(400).json({ error: "Kategorinamn krävs" });
+    }
+
+    //Hitta kategori (case-insensitive)
     const category = await Category.findOne({
       name: { $regex: new RegExp(categoryName, "i") }
     });
@@ -93,9 +99,10 @@ router.get("/:categoryName/products", async (req, res) => {
       return res.status(404).json({ error: "Kategorin hittades inte" });
     }
 
+    //Hämta produkter som tillhör denna kategori
     const products = await Product.find({ category: category._id }).populate("category");
 
-    res.status(200).json(products);
+    res.status(200).json(products); 
   } catch (error) {
     console.error("Fel vid hämtning av produkter för kategori:", error);
     res.status(500).json({ error: error.message });
@@ -103,6 +110,7 @@ router.get("/:categoryName/products", async (req, res) => {
 });
 
 export default router;
+
 
 
 
