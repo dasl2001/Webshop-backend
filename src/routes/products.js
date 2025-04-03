@@ -14,6 +14,7 @@ router.get("/search", async (req, res) => {
 
   //Textsökning i namn, beskrivning eller kategori-namn
   let categoryMatch = null;
+
   if (q) {
     const regex = new RegExp(q, "i")
 
@@ -54,7 +55,7 @@ router.get("/search", async (req, res) => {
   }
 })
 
-//Hämta alla produkter
+//Enkel sökning via /api/products?name=
 router.get("/", async (req, res) => {
   try {
     const products = await Product.find().populate("category")
@@ -64,7 +65,7 @@ router.get("/", async (req, res) => {
   }
 })
 
-//Hämta en specifik produkt
+//Hämta en specifik produkt via ID
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
   try {
@@ -127,5 +128,6 @@ router.delete("/:id", adminAuth, async (req, res) => {
 })
 
 export default router
+
 
 

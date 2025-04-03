@@ -1,6 +1,7 @@
 import express from "express";
 import Category from "../models/Category.js";
-import { adminAuth } from "../middleware/auth.js"; 
+import Product from "../models/Product.js";
+import { adminAuth } from "../middleware/auth.js";
 
 const router = express.Router()
 
@@ -84,8 +85,15 @@ router.get("/:id", async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message })
   }
-});
+})
 
 export default router;
+
+
+
+
+
+
+
 
 
