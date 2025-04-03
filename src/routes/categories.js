@@ -62,25 +62,28 @@ router.get("/", async (req, res) => {
   try {
     const { name } = req.query;
 
-    //Om "name" finns men är tom
-    if (name && name.trim() === "") {
+    //Om name finns men är tom sträng
+    if (typeof name === "string" && name.trim() === "") {
       return res.status(400).json({ error: "Sökterm får inte vara tom" });
     }
 
-    //Om "name" finns och inte är en tom sträng
-    if (name && name.trim() !== "") {
+    //Om name finns och inte är tomt
+    if (typeof name === "string") {
       const category = await Category.findOne({
         name: { $regex: new RegExp(name, "i") }
       });
+
       if (!category) {
         return res.status(404).json({ error: "Kategorin hittades inte" });
       }
+
       return res.json(category);
     }
 
-    //Om "name" inte skickas med alls – hämta alla kategorier
+    // 📋 Om name inte finns – returnera alla
     const categories = await Category.find();
     res.json(categories);
+
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -126,6 +129,7 @@ router.get("/:categoryName/products", async (req, res) => {
 });
 
 export default router;
+
 
 
 
