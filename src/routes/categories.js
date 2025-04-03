@@ -57,15 +57,33 @@ router.delete("/:id", adminAuth, async (req, res) => {
   }
 });
 
-//Hämta alla kategorier
+// Hämta alla kategorier eller en specifik kategori via query-parametern "name"
 router.get("/", async (req, res) => {
   try {
+    const { name } = req.query;
+
+    // Om "name" finns och inte är en tom sträng
+    if (name && name.trim() !== "") {
+      const category = await Category.findOne({ name: { $regex: new RegExp(name, "i") } });
+      if (!category) {
+        return res.status(404).json({ error: "Kategorin hittades inte" });
+      }
+      return res.json(category);
+    }
+
+    // Om "name" finns men är tom
+    if (name && name.trim() === "") {
+      return res.status(400).json({ error: "Sökterm får inte vara tom" });
+    }
+
+    // Om "name" inte skickas med alls – hämta alla kategorier
     const categories = await Category.find();
     res.json(categories);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
+
 
 //Hämta kategori via ID
 router.get("/:id", async (req, res) => {
