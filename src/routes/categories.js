@@ -5,6 +5,8 @@ import { adminAuth } from "../middleware/auth.js";
 const router = express.Router()
 
 //Skapa ny kategori (endast admin)
+//Tar emot kategoridata från request body, sparar den i databasen och returnerar den skapade kategorin.
+//Vid fel returneras ett passande felmeddelande.
 router.post("/", adminAuth, async (req, res) => {
   try {
     const newCategory = new Category(req.body)
@@ -16,6 +18,10 @@ router.post("/", adminAuth, async (req, res) => {
 })
 
 //Uppdatera kategori (endast admin)
+// PUT /:id – Uppdaterar en kategori (endast admin)
+// - Kräver adminAuth-middleware
+// - Body: fält att uppdatera (utan _id)
+// - Svar: 200 med uppdaterad kategori, 404 om inte hittad, 500 vid fel
 router.put("/:id", adminAuth, async (req, res) => {
   try {
     const { id } = req.params;
