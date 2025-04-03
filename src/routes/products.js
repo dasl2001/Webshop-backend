@@ -6,18 +6,17 @@ import { adminAuth } from "../middleware/auth.js";
 
 const router = express.Router();
 
-//Sökprodukter – måste placeras före "/:id"
+//Avancerad sökning: q = namn, beskrivning, kategori + prisintervall
 router.get("/search", async (req, res) => {
   const { q, minPrice, maxPrice, sortBy = "name", order = "asc" } = req.query;
 
   const filter = {};
-
-  //Textsökning i namn, beskrivning eller kategori-namn
   let categoryMatch = null;
+
   if (q) {
     const regex = new RegExp(q, "i");
 
-    //Leta upp matchande kategori
+    //Sök i kategorinamn också
     const foundCategory = await Category.findOne({ name: { $regex: regex } });
     if (foundCategory) {
       categoryMatch = foundCategory._id;
@@ -54,17 +53,29 @@ router.get("/search", async (req, res) => {
   }
 });
 
-//Hämta alla produkter
+//Enkel sökning via /api/products?name=
 router.get("/", async (req, res) => {
   try {
-    const products = await Product.find().populate("category");
-    res.json(products);
+    const { name } = req.query;
+    const filter = {};
+
+    if (name && name.trim() !== "") {
+      filter.name = { $regex: new RegExp(name, "i") };
+    }
+
+    const products = await Product.find(filter).populate("category");
+
+    if (name && name.trim() !== "" && products.length === 0) {
+      return res.status(404).json({ message: "Inga produkter hittades." });
+    }
+
+    res.status(200).json(products);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-//Hämta en specifik produkt
+//Hämta en specifik produkt via ID
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
   try {
@@ -121,5 +132,6 @@ router.delete("/:id", adminAuth, async (req, res) => {
 });
 
 export default router;
+
 
 
