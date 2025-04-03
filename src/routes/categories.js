@@ -1,6 +1,6 @@
 import express from "express";
 import Category from "../models/Category.js";
-import Product from "../models/Product.js"; 
+import Product from "../models/Product.js";
 import { adminAuth } from "../middleware/auth.js";
 
 const router = express.Router();
@@ -57,33 +57,34 @@ router.delete("/:id", adminAuth, async (req, res) => {
   }
 });
 
-// Hämta alla kategorier eller en specifik kategori via query-parametern "name"
+//Hämta alla kategorier eller en specifik kategori via query-parametern "name"
 router.get("/", async (req, res) => {
   try {
     const { name } = req.query;
 
-    // Om "name" finns och inte är en tom sträng
+    //Om "name" finns men är tom
+    if (name && name.trim() === "") {
+      return res.status(400).json({ error: "Sökterm får inte vara tom" });
+    }
+
+    //Om "name" finns och inte är en tom sträng
     if (name && name.trim() !== "") {
-      const category = await Category.findOne({ name: { $regex: new RegExp(name, "i") } });
+      const category = await Category.findOne({
+        name: { $regex: new RegExp(name, "i") }
+      });
       if (!category) {
         return res.status(404).json({ error: "Kategorin hittades inte" });
       }
       return res.json(category);
     }
 
-    // Om "name" finns men är tom
-    if (name && name.trim() === "") {
-      return res.status(400).json({ error: "Sökterm får inte vara tom" });
-    }
-
-    // Om "name" inte skickas med alls – hämta alla kategorier
+    //Om "name" inte skickas med alls – hämta alla kategorier
     const categories = await Category.find();
     res.json(categories);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
-
 
 //Hämta kategori via ID
 router.get("/:id", async (req, res) => {
@@ -103,12 +104,10 @@ router.get("/:categoryName/products", async (req, res) => {
   try {
     const { categoryName } = req.params;
 
-    //Kontroll om söktermen saknas
     if (!categoryName || categoryName.trim() === "") {
       return res.status(400).json({ error: "Kategorinamn krävs" });
     }
 
-    //Hitta kategori (case-insensitive)
     const category = await Category.findOne({
       name: { $regex: new RegExp(categoryName, "i") }
     });
@@ -117,10 +116,9 @@ router.get("/:categoryName/products", async (req, res) => {
       return res.status(404).json({ error: "Kategorin hittades inte" });
     }
 
-    //Hämta produkter som tillhör denna kategori
     const products = await Product.find({ category: category._id }).populate("category");
 
-    res.status(200).json(products); 
+    res.status(200).json(products);
   } catch (error) {
     console.error("Fel vid hämtning av produkter för kategori:", error);
     res.status(500).json({ error: error.message });
