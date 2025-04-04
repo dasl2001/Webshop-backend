@@ -38,14 +38,26 @@ router.put("/:id", adminAuth, async (req, res) => {
 });
 
 /*
-Radera kategori (endast admin)
+Radera kategori (endast admin) – om inga produkter är kopplade
 */
 router.delete("/:id", adminAuth, async (req, res) => {
   try {
-    const deletedCategory = await Category.findByIdAndDelete(req.params.id);
+    const categoryId = req.params.id;
+
+    //Kontrollera om det finns produkter kopplade till denna kategori
+    const productCount = await Product.countDocuments({ category: categoryId });
+
+    if (productCount > 0) {
+      return res.status(400).json({
+        error: "Kategorin kan inte raderas eftersom det finns produkter kopplade till den."
+      });
+    }
+
+    const deletedCategory = await Category.findByIdAndDelete(categoryId);
     if (!deletedCategory) {
       return res.status(404).json({ error: "Kategorin hittades inte" });
     }
+
     res.status(200).json({ message: "Kategori raderad" });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -65,7 +77,7 @@ router.get("/", async (req, res) => {
       return res.status(400).json({ error: "Sökterm får inte vara tom" });
     }
 
-    //Om name finns → hämta kategori och dess produkter
+    //Om name finns (hämta kategori och dess produkter)
     if (typeof name === "string") {
       const category = await Category.findOne({
         name: { $regex: new RegExp(name, "i") }
@@ -80,7 +92,7 @@ router.get("/", async (req, res) => {
       return res.json({ category, products });
     }
 
-    //Ingen name-sökning → hämta alla kategorier
+    //Ingen name-sökning (hämta alla kategorier)
     const categories = await Category.find();
     res.json(categories);
   } catch (error) {
@@ -89,6 +101,7 @@ router.get("/", async (req, res) => {
 });
 
 export default router;
+
 
 
 
