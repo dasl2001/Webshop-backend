@@ -1,29 +1,122 @@
 [
     {
-        "_id": "1",
-        "name": "Banana",
-        "price": 0.29,
-        "description": "A banana is an edible fruit – botanically a berry – produced by several kinds of large herbaceous flowering plants in the genus Musa.",
-        "stock": 100,
-        "createdAt": "2025-01-01T00:00:00.000Z",
-        "updatedAt": "2025-01-03T00:00:00.000Z"
+      "_id": "67e5c040a3bdb57490fcd5d6",
+      "name": "Vita bönor",
+      "price": 31.0,
+      "description": "Vita bönor av märket Sevan, 900g",
+      "stock": 120,
+      "createdAt": "2025-03-27T21:16:48.914+00:00",
+      "updatedAt": "2025-03-28T11:56:48.851+00:00",
+      "imageUrl": "https://sevan.se/storage/EF7D463D3EB12EDB4C81C48E7DD3509D7D1885498340C…"
     },
     {
-        "_id": "2",
-        "name": "Apple",
-        "price": 0.59,
-        "description": "An apple is an edible fruit produced by an apple tree.",
-        "stock": 50,
-        "createdAt": "2025-01-02T00:00:00.000Z",
-        "updatedAt": "2025-01-02T00:00:00.000Z"
+      "_id": "67e54c8d3482d8ab3c96cbbe",
+      "name": "Spaghetti",
+      "price": 20.0,
+      "description": "Zeta Casa Di Luca Spaghetti 400g",
+      "stock": 75,
+      "createdAt": "2025-03-27T13:03:09.517+00:00",
+      "updatedAt": "2025-03-28T12:39:42.107+00:00",
+      "imageUrl": "https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcSiD2-O-MStkFao…"
     },
     {
-        "_id": "3",
-        "name": "Orange",
-        "price": 0.49,
-        "description": "The orange is the fruit of various citrus species in the family Rutaceae.",
-        "stock": 75,
-        "createdAt": "2025-01-03T00:00:00.000Z",
-        "updatedAt": "2025-01-03T00:00:00.000Z"
+      "_id": "67e54c8d3482d8ab3c96cbc5",
+      "name": "Sura Colanappar",
+      "price": 15.0,
+      "description": "Sura Colanappar, en helt vegansk produkt, 80g",
+      "stock": 60,
+      "createdAt": "2025-03-27T13:03:09.518+00:00",
+      "updatedAt": "2025-03-28T09:43:26.645+00:00",
+      "imageUrl": "https://www.kalaskungen.com/pub_images/original/74-50135.jpg"
+    },
+    {
+      "_id": "67e54c8d3482d8ab3c96cbc7",
+      "name": "Stora Cashewnötter",
+      "price": 35.0,
+      "description": "Stora cashenötter, rostade & saltade av märket Exotics Snacks, 250g",
+      "stock": 45,
+      "createdAt": "2025-03-27T13:03:09.518+00:00",
+      "updatedAt": "2025-03-28T09:27:19.674+00:00",
+      "imageUrl": "https://res.cloudinary.com/coopsverige/images/e_sharpen,f_auto,fl_clip…"
+    },
+    {
+      "_id": "67e54c8d3482d8ab3c96cbbd",
+      "name": "Krossade Tomater",
+      "price": 12.5,
+      "description": "Krossade tomater örter av märket Garant, 390g",
+      "stock": 100,
+      "createdAt": "2025-03-27T13:03:09.517+00:00",
+      "updatedAt": "2025-03-28T12:46:17.547+00:00",
+      "imageUrl": "https://bakal.se/wp-content/uploads/2023/09/ABC_Prod3085-324x324.jpg"
+    },
+    {
+      "_id": "67e54c8d3482d8ab3c96cbbf",
+      "name": "Saltade chips",
+      "price": 18.0,
+      "description": "Lay's Classic saltade chips, 50g",
+      "stock": 60,
+      "createdAt": "2025-03-27T13:03:09.517+00:00",
+      "updatedAt": "2025-03-28T11:15:03.679+00:00",
+      "imageUrl": "https://st2.depositphotos.com/3053449/6553/i/950/depositphotos_6553077…"
+    },
+    {
+      "_id": "67e54c8d3482d8ab3c96cbc0",
+      "name": "Äppeljuice",
+      "price": 13.0,
+      "description": "Godmorgon äppeljuice, 250ml",
+      "stock": 50,
+      "createdAt": "2025-03-27T13:03:09.517+00:00",
+      "updatedAt": "2025-03-28T11:03:18.441+00:00",
+      "imageUrl": "https://outofhome.se/media/catalog/product/cache/30/image/17f82f742ffe…"
+    },
+    {
+      "_id": "67e54c8d3482d8ab3c96cbc3",
+      "name": "Ice Coffee Latte",
+      "price": 24.5,
+      "description": "Hell Ice Coffe Latte, 330ml",
+      "stock": 40,
+      "createdAt": "2025-03-27T13:03:09.517+00:00",
+      "updatedAt": "2025-03-28T10:50:54.147+00:00",
+      "imageUrl": "https://outofhome.se/media/catalog/product/cache/30/image/17f82f742ffe…"
+    },
+    {
+      "_id": "67e54c8d3482d8ab3c96cbc4",
+      "name": "Mjölkchoklad",
+      "price": 28.0,
+      "description": "Marabou mjölkchoklad, 200g",
+      "stock": 45,
+      "createdAt": "2025-03-27T13:03:09.518+00:00",
+      "updatedAt": "2025-03-28T10:43:45.767+00:00",
+      "imageUrl": "https://gottebiten.se/media/catalog/product/cache/image/1000x1320/e9c3…"
+    },
+    {
+      "_id": "67e54c8d3482d8ab3c96cbbc",
+      "name": "Basmatiris",
+      "price": 89.0,
+      "description": "Vällagrat och luftig Basmatiris, långkornigt av märket Sevan, 2kg",
+      "stock": 80,
+      "createdAt": "2025-03-27T13:03:09.517+00:00",
+      "updatedAt": "2025-03-28T12:49:05.804+00:00",
+      "imageUrl": "https://media.delitea.se/product-images/XL/sevan-basmatiris-2kg-0.jpg"
+    },
+    {
+      "_id": "67e54c8d3482d8ab3c96cbc2",
+      "name": "Havredryck",
+      "price": 22.0,
+      "description": "Oatly havredryck, 1L",
+      "stock": 70,
+      "createdAt": "2025-03-27T13:03:09.517+00:00",
+      "updatedAt": "2025-03-28T10:59:01.267+00:00",
+      "imageUrl": "https://res.cloudinary.com/coopsverige/image/upload/e_sharpen,f_auto,f…"
+    },
+    {
+      "_id": "67e58bbe13474117bf7d8513",
+      "name": "Coca Cola Zero",
+      "price": 14.0,
+      "description": "Coca Cola Zero sugar, 500ml",
+      "stock": 100,
+      "createdAt": "2025-03-27T17:32:46.952+00:00",
+      "updatedAt": "2025-03-28T09:24:19.704+00:00",
+      "imageUrl": "https://static.unpr.io/itemimage/1555/products/full/IMAGE-6657b7b26153…"
     }
-]
+  ]
