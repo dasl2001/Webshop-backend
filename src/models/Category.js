@@ -41,7 +41,6 @@ updatedAt
 const Category = mongoose.model("Category", categorySchema)
 export default Category
 
-const Category = mongoose.model("Category", categorySchema);
-export default Category;
+
 
 
