@@ -95,8 +95,6 @@ router.get("/", async (req, res) => {
     //Ingen name-sökning (hämta alla kategorier)
     const categories = await Category.find();
     res.json(categories);
-    const categories = await Category.find()
-    res.json(categories)
   } catch (error) {
     res.status(500).json({ error: error.message })
   }

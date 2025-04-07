@@ -24,3 +24,36 @@ router.post("/", async (req, res) => {
 });
 
 export default router;
+
+// Skapa id för att se kundbeställnningar, för admin. Två separata sökvägar för admin och användare. 
+
+const express = require('express')
+const app = express()
+
+app.use(express.json())
+
+let orders = []
+let currentId = 1
+
+// Skapa beställning (kund)
+app.post('/order', (req, res) => {
+  const { customerName, items } = req.body;
+
+  const order = {
+    id: currentId++,
+    customerName,
+    items
+  }
+
+  orders.push(order);
+  res.status(201).json(order)
+})
+
+// Admin – hämta alla beställningar
+app.get('/admin/orders', (req, res) => {
+  res.json(orders);
+})
+
+app.listen(3000, () => {
+  console.log('Servern körs på port 3000')
+})
