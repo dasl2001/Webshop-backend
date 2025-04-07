@@ -36,6 +36,7 @@ Routing
 app.use("/api/products", productRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/orders", orderRoutes);
 
 /*
 Läser porten från .env, annars standard 3000
