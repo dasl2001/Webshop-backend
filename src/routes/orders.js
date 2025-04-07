@@ -35,7 +35,7 @@ app.use(express.json())
 let orders = []
 let currentId = 1
 
-// Skapa beställning (kund)
+// Skapa beställning (kund) 
 app.post('/order', (req, res) => {
   const { customerName, items } = req.body;
 
