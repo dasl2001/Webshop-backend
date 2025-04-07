@@ -8,6 +8,7 @@ import cors from 'cors';
 import productRoutes from "./routes/products.js";
 import categoryRoutes from "./routes/categories.js";
 import authRoutes from "./routes/auth.js";
+import orderRoutes from "./routes/orders.js";
 
 /*
 Initiera appen och läs .env filen
