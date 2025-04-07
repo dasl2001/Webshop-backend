@@ -64,6 +64,36 @@ Länk till produktbild
       type: String,
       required: true,
     },
+
+    jämförpris: {
+      type: String,
+      default: "",
+    },
+
+    innehållsförteckning: {
+      type: String,
+      default: "",
+    },
+
+    näringsvärde: {
+      type: String,
+      default: "",
+    },
+
+    leverantör: {
+      type: String,
+      default: "",
+    },
+
+    varumärke: {
+      type: String,
+      default: "",
+    },
+
+    ursprungsland: {
+      type: String,
+      default: "",
+    },
   },
 
 /*

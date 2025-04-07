@@ -9,12 +9,14 @@ email	Obligatoriskt, måste vara unikt
 password	Obligatoriskt – kommer hash:as
 username	Frivilligt, men unikt
 admin	false som standard, och kan inte ändras efter att den har satts (immutable)
+lastLogin	Senaste inloggning
 */
 const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   username: { type: String, unique: true },
-  admin: { type: Boolean, default: false, immutable: true }
+  admin: { type: Boolean, default: false, immutable: true },
+  lastLogin: { type: Date, default: null }
 });
 
 /*

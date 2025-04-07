@@ -1,0 +1,29 @@
+[
+    {
+        "_id": "67e5291db7a26193100f9ad3",
+        "name": "Skafferi",
+        "description": "Alla typer av skafferi",
+        "type": "Skafferi",
+        "createdAt": "2025-03-27T10:31:57.055+00:00",
+        "updatedAt": "2025-03-27T10:31:57.055+00:00",
+        "__v": "0" 
+    },
+    {
+        "_id": "67e52939b7a26193100f9ad5",
+        "name": "Drycker",
+        "description": "Alla typer av dryck",
+        "type": "Dryck",
+        "createdAt": "2025-03-27T10:32:25.971+00:00",
+        "updatedAt": "2025-03-27T10:32:25.971+00:00",
+        "__v": "0"
+    },
+    {
+        "_id": "67e5295bb7a26193100f9ad7",
+        "name": "Snacks & godis",
+        "description": "Alla typer av snacks och godis",
+        "type": "Snacks och godis",
+        "createdAt": "2025-03-27T10:32:59.400+00:00",
+        "updatedAt": "2025-03-27T10:32:59.400+00:00",
+        "__v": "0" 
+    }
+]

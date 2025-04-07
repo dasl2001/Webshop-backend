@@ -6,7 +6,8 @@ import { adminAuth } from "../middleware/auth.js";
 
 const router = express.Router()
 
-//Rutt för att söka produkter – ska deklareras innan rutten för "/:id"
+
+//Avancerad sökning: q = namn, beskrivning, kategori + prisintervall
 router.get("/search", async (req, res) => {
   const { q, minPrice, maxPrice, sortBy = "name", order = "asc" } = req.query;
 
@@ -18,8 +19,7 @@ router.get("/search", async (req, res) => {
   if (q) {
     const regex = new RegExp(q, "i")
 
-    //Sök efter en kategori som matchar angivet kriterium
-    const foundCategory = await Category.findOne({ name: { $regex: regex } })
+    const foundCategory = await Category.findOne({ name: { $regex: regex } });
     if (foundCategory) {
       categoryMatch = foundCategory._id;
     }
@@ -34,7 +34,6 @@ router.get("/search", async (req, res) => {
     }
   }
 
-  // Fixar, implementerar prisintervallen
   if (minPrice || maxPrice) {
     filter.price = {}
     if (minPrice) filter.price.$gte = parseFloat(minPrice)
@@ -55,7 +54,7 @@ router.get("/search", async (req, res) => {
   }
 })
 
-//Enkel sökning via /api/products?name=
+//Enkel sökning via ?name=
 router.get("/", async (req, res) => {
   try {
     const products = await Product.find().populate("category")
@@ -65,7 +64,7 @@ router.get("/", async (req, res) => {
   }
 })
 
-//Hämta en specifik produkt via ID
+//Hämta produkt via ID
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
   try {
@@ -127,7 +126,53 @@ router.delete("/:id", adminAuth, async (req, res) => {
   }
 })
 
-export default router
+
+
+//Admin – Lista alla produkter
+router.get("/admin/all", adminAuth, async (req, res) => {
+  try {
+    const products = await Product.find().populate("category");
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+//Admin – Sök via namn
+router.get("/admin/search-name", adminAuth, async (req, res) => {
+  try {
+    const { name } = req.query;
+    if (!name || name.trim() === "") {
+      return res.status(400).json({ error: "Sökterm krävs" });
+    }
+
+    const products = await Product.find({ name: { $regex: new RegExp(name, "i") } }).populate("category");
+
+    if (products.length === 0) {
+      return res.status(404).json({ message: "Inga produkter hittades." });
+    }
+
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+//Admin – Hämta produkt via ID
+router.get("/admin/product/:id", adminAuth, async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id).populate("category");
+    if (!product) {
+      return res.status(404).json({ error: "Produkt hittades inte" });
+    }
+    res.json(product);
+  } catch (error) {
+    res.status(404).json({ error: "Produkt hittades inte" });
+  }
+});
+
+export default router;
+
 
 
 

@@ -1,3 +1,4 @@
+// middleware/auth.js
 import jwt from 'jsonwebtoken';
 
 export const auth = (req, res, next) => {
@@ -8,7 +9,7 @@ export const auth = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // Lägger decoded info i request
+    req.user = decoded;
     next();
   } catch (error) {
     res.status(401).json({ error: "Ogiltig token" });
@@ -32,3 +33,5 @@ export const adminAuth = (req, res, next) => {
     res.status(401).json({ error: "Ogiltig token" });
   }
 };
+
+

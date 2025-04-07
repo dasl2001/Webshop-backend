@@ -3,70 +3,98 @@ import Category from "../models/Category.js";
 import Product from "../models/Product.js";
 import { adminAuth } from "../middleware/auth.js";
 
-const router = express.Router()
+const router = express.Router();
 
-//Skapa ny kategori (endast admin)
-//Tar emot kategoridata från request body, sparar den i databasen och returnerar den skapade kategorin.
-//Vid fel returneras ett passande felmeddelande.
+/*
+Skapa ny kategori (endast admin)
+*/
 router.post("/", adminAuth, async (req, res) => {
   try {
-    const newCategory = new Category(req.body)
-    await newCategory.save()
-    res.status(201).json({ success: true, data: newCategory })
+    const newCategory = new Category(req.body);
+    await newCategory.save();
+    res.status(201).json({ success: true, data: newCategory });
   } catch (error) {
-    res.status(400).json({ success: false, error: error.message })
+    res.status(400).json({ success: false, error: error.message });
   }
-})
+});
 
-//Uppdatera kategori (endast admin)
-// PUT /:id – Uppdaterar en kategori (endast admin)
-// - Kräver adminAuth-middleware
-// - Body: fält att uppdatera (utan _id)
-// - Svar: 200 med uppdaterad kategori, 404 om inte hittad, 500 vid fel
+/*
+Uppdatera kategori (endast admin)
+*/
 router.put("/:id", adminAuth, async (req, res) => {
   try {
-    const { id } = req.params;
-    const categoryData = { ...req.body }
-    delete categoryData._id
-
     const updatedCategory = await Category.findByIdAndUpdate(
-      id,
-      { $set: categoryData },
+      req.params.id,
+      { $set: req.body },
       { new: true, runValidators: true }
     );
-
     if (!updatedCategory) {
-      return res.status(404).json({ error: "Kategori hittades inte" })
+      return res.status(404).json({ error: "Kategorin hittades inte" });
     }
-
-    res.status(200).json({ data: updatedCategory })
+    res.status(200).json({ success: true, data: updatedCategory });
   } catch (error) {
-    console.error("Error updating category:", error)
-    res.status(500).json({ error: error.message })
+    res.status(500).json({ error: error.message });
   }
-})
+});
 
-//Radera kategori (endast admin)
+/*
+Radera kategori (endast admin) – om inga produkter är kopplade
+*/
 router.delete("/:id", adminAuth, async (req, res) => {
   try {
-    const { id } = req.params
+    const categoryId = req.params.id;
 
-    const deletedCategory = await Category.findByIdAndDelete(id)
+    //Kontrollera om det finns produkter kopplade till denna kategori
+    const productCount = await Product.countDocuments({ category: categoryId });
 
-    if (!deletedCategory) {
-      return res.status(404).json({ error: "Category not found" })
+    if (productCount > 0) {
+      return res.status(400).json({
+        error: "Kategorin kan inte raderas eftersom det finns produkter kopplade till den."
+      });
     }
 
-    res.status(200).json({ message: "Category deleted successfully" })
-  } catch (error) {
-    console.error("Fel vid radering av kategori:", error)
-    res.status(500).json({ error: error.message })
-  }
-})
+    const deletedCategory = await Category.findByIdAndDelete(categoryId);
+    if (!deletedCategory) {
+      return res.status(404).json({ error: "Kategorin hittades inte" });
+    }
 
-// Hämta alla kategorier (öppen för alla)
+    res.status(200).json({ message: "Kategori raderad" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/*
+Hämta alla kategorier eller en specifik kategori + dess produkter
+(öppen för alla)
+*/
 router.get("/", async (req, res) => {
   try {
+    const { name } = req.query;
+
+    //Om name finns men är tomt
+    if (typeof name === "string" && name.trim() === "") {
+      return res.status(400).json({ error: "Sökterm får inte vara tom" });
+    }
+
+    //Om name finns (hämta kategori och dess produkter)
+    if (typeof name === "string") {
+      const category = await Category.findOne({
+        name: { $regex: new RegExp(name, "i") }
+      });
+
+      if (!category) {
+        return res.status(404).json({ error: "Kategorin hittades inte" });
+      }
+
+      const products = await Product.find({ category: category._id }).populate("category");
+
+      return res.json({ category, products });
+    }
+
+    //Ingen name-sökning (hämta alla kategorier)
+    const categories = await Category.find();
+    res.json(categories);
     const categories = await Category.find()
     res.json(categories)
   } catch (error) {
@@ -88,6 +116,8 @@ router.get("/:id", async (req, res) => {
 })
 
 export default router;
+
+
 
 
 
