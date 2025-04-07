@@ -1,10 +1,13 @@
 import express from "express";
 import Order from "../models/Order.js";
+import { adminAuth, auth } from "../middleware/auth.js";
 
 const router = express.Router();
 
-// POST /api/orders – spara beställning
-router.post("/", async (req, res) => {
+/*
+  POST /api/orders – Skapa en ny beställning (vanlig användare)
+*/
+router.post("/", auth, async (req, res) => {
   try {
     const { name, address, phone, total } = req.body;
 
@@ -12,7 +15,14 @@ router.post("/", async (req, res) => {
       return res.status(400).json({ error: "Alla fält krävs" });
     }
 
-    const newOrder = new Order({ name, address, phone, total });
+    const newOrder = new Order({
+      name,
+      address,
+      phone,
+      total,
+      userId: req.user.id,
+    });
+
     await newOrder.save();
 
     res.status(201).json({
@@ -23,39 +33,37 @@ router.post("/", async (req, res) => {
   }
 });
 
-export default router;
+/*
+  GET /api/orders/:id – Hämta specifik order (endast ägare eller admin)
+*/
+router.get("/:id", auth, async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
 
-// Skapa id för att se kundbeställnningar, för admin. Två separata sökvägar för admin och användare. 
+    if (!order) {
+      return res.status(404).json({ error: "Order hittades inte" });
+    }
 
-const express = require('express')
-const app = express()
-
-app.use(express.json())
-
-let orders = []
-let currentId = 1
-
-// Skapa beställning (kund) 
-app.post('/order', (req, res) => {
-  const { customerName, items } = req.body;
-
-  const order = {
-    id: currentId++,
-    customerName,
-    items
+    if (req.user.admin || order.userId.toString() === req.user.id) {
+      return res.json(order);
+    } else {
+      return res.status(403).json({ error: "Otillräckliga rättigheter" });
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Fel vid hämtning av order" });
   }
+});
 
-  orders.push(order);
-  res.status(201).json(order)
-})
+/*
+  GET /api/orders – Hämta alla beställningar (endast admin)
+*/
+router.get("/", adminAuth, async (req, res) => {
+  try {
+    const orders = await Order.find().sort({ createdAt: -1 });
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
-// Admin – hämta alla beställningar
-app.get('/admin/orders', (req, res) => {
-  res.json(orders);
-})
-
-app.listen(3000, () => {
-  console.log('Servern körs på port 3000')
-})
-
-
+export default router;
