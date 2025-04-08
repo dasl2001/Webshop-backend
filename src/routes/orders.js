@@ -5,18 +5,15 @@ import { adminAuth } from "../middleware/auth.js";
 const router = express.Router();
 
 /*
-Skapa en ny beställning – öppen för alla (ingen inloggning krävs)
+POST – Ny beställning 
 */
 router.post("/", async (req, res) => {
   try {
     const { name, address, phone, total } = req.body;
-
-    // Kontrollera att alla fält är ifyllda
     if (!name || !address || !phone || !total) {
       return res.status(400).json({ error: "Alla fält krävs" });
     }
 
-    // Spara ny order i databasen
     const newOrder = new Order({ name, address, phone, total });
     await newOrder.save();
 
@@ -30,29 +27,38 @@ router.post("/", async (req, res) => {
 });
 
 /*
-Hämta en order via ID – tillåtet för alla
+ADMIN – Dagens beställningar 
 */
-router.get("/:id", async (req, res) => {
+router.get("/admin/today", adminAuth, async (req, res) => {
   try {
-    const order = await Order.findById(req.params.id);
-    if (!order) {
-      return res.status(404).json({ error: "Order hittades inte" });
-    }
-    res.json(order);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+
+    const todaysOrders = await Order.find({
+      createdAt: { $gte: today, $lt: tomorrow }
+    }).sort({ createdAt: -1 });
+
+    res.json({
+      date: today.toISOString().split("T")[0],
+      count: todaysOrders.length,
+      orders: todaysOrders
+    });
   } catch (error) {
-    res.status(500).json({ error: "Fel vid hämtning av order" });
+    console.error("Fel i /admin/today:", error);
+    res.status(500).json({ error: "Kunde inte hämta dagens beställningar" });
   }
 });
 
 /*
-Admin: Hämta en specifik order med token
+ADMIN – Hämta specifik order med token
 */
 router.get("/admin/:id", adminAuth, async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
-    if (!order) {
-      return res.status(404).json({ error: "Order hittades inte" });
-    }
+    if (!order) return res.status(404).json({ error: "Order hittades inte" });
     res.json(order);
   } catch (error) {
     res.status(500).json({ error: "Fel vid hämtning av order" });
@@ -60,7 +66,7 @@ router.get("/admin/:id", adminAuth, async (req, res) => {
 });
 
 /*
-Admin: Hämta alla beställningar (kräver token)
+ADMIN – Alla beställningar
 */
 router.get("/", adminAuth, async (req, res) => {
   try {
@@ -72,31 +78,20 @@ router.get("/", adminAuth, async (req, res) => {
 });
 
 /*
-Admin: Hämta endast dagens beställningar (kräver token)
+GET /:id – Vanlig användare hämtar sin order utan token
 */
-router.get("/admin/today", adminAuth, async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Start kl. 00:00
-
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1); // Nästa dag
-
-    const todaysOrders = await Order.find({
-      createdAt: { $gte: today, $lt: tomorrow }
-    }).sort({ createdAt: -1 });
-
-    res.json({
-      date: today.toISOString().split("T")[0], // Endast datum
-      count: todaysOrders.length,
-      orders: todaysOrders
-    });
+    const order = await Order.findById(req.params.id);
+    if (!order) return res.status(404).json({ error: "Order hittades inte" });
+    res.json(order);
   } catch (error) {
-    res.status(500).json({ error: "Kunde inte hämta dagens beställningar" });
+    res.status(500).json({ error: "Fel vid hämtning av order" });
   }
 });
 
 export default router;
+
 
 
 
