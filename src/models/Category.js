@@ -36,12 +36,11 @@ createdAt
 updatedAt
 */
   { timestamps: true }
-);
+)
 
-/*
-Skapar Mongoose-modellen Category, kopplad till MongoDB-kollektionen categories.
-*/
-const Category = mongoose.model("Category", categorySchema);
-export default Category;
+const Category = mongoose.model("Category", categorySchema)
+export default Category
+
+
 
 

@@ -8,6 +8,7 @@ import cors from 'cors';
 import productRoutes from "./routes/products.js";
 import categoryRoutes from "./routes/categories.js";
 import authRoutes from "./routes/auth.js";
+import orderRoutes from "./routes/orders.js";
 
 /*
 Initiera appen och läs .env filen
@@ -36,6 +37,7 @@ Routing
 app.use("/api/products", productRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/orders", orderRoutes);
 
 /*
 Läser porten från .env, annars standard 3000

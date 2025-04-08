@@ -4,18 +4,20 @@ import Product from "../models/Product.js";
 import Category from "../models/Category.js";
 import { adminAuth } from "../middleware/auth.js";
 
-const router = express.Router();
+const router = express.Router()
 
 
 //Avancerad sökning: q = namn, beskrivning, kategori + prisintervall
 router.get("/search", async (req, res) => {
   const { q, minPrice, maxPrice, sortBy = "name", order = "asc" } = req.query;
 
-  const filter = {};
+  const filter = {}
+
+  //Textsökning i namn, beskrivning eller kategori-namn
   let categoryMatch = null;
 
   if (q) {
-    const regex = new RegExp(q, "i");
+    const regex = new RegExp(q, "i")
 
     const foundCategory = await Category.findOne({ name: { $regex: regex } });
     if (foundCategory) {
@@ -28,51 +30,39 @@ router.get("/search", async (req, res) => {
     ];
 
     if (categoryMatch) {
-      filter.$or.push({ category: categoryMatch });
+      filter.$or.push({ category: categoryMatch })
     }
   }
 
   if (minPrice || maxPrice) {
-    filter.price = {};
-    if (minPrice) filter.price.$gte = parseFloat(minPrice);
-    if (maxPrice) filter.price.$lte = parseFloat(maxPrice);
+    filter.price = {}
+    if (minPrice) filter.price.$gte = parseFloat(minPrice)
+    if (maxPrice) filter.price.$lte = parseFloat(maxPrice)
   }
 
-  const sort = {};
+  const sort = {}
   sort[sortBy] = order === "desc" ? -1 : 1;
 
   try {
-    const results = await Product.find(filter).populate("category").sort(sort);
+    const results = await Product.find(filter).populate("category").sort(sort)
     if (results.length === 0) {
-      return res.status(404).json({ message: "Inga produkter hittades." });
+      return res.status(404).json({ message: "Inga produkter hittades." })
     }
-    res.json(results);
+    res.json(results)
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message })
   }
-});
+})
 
 //Enkel sökning via ?name=
 router.get("/", async (req, res) => {
   try {
-    const { name } = req.query;
-    const filter = {};
-
-    if (name && name.trim() !== "") {
-      filter.name = { $regex: new RegExp(name, "i") };
-    }
-
-    const products = await Product.find(filter).populate("category");
-
-    if (name && name.trim() !== "" && products.length === 0) {
-      return res.status(404).json({ message: "Inga produkter hittades." });
-    }
-
-    res.status(200).json(products);
+    const products = await Product.find().populate("category")
+    res.json(products)
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message })
   }
-});
+})
 
 //Hämta produkt via ID
 router.get("/:id", async (req, res) => {
@@ -80,25 +70,29 @@ router.get("/:id", async (req, res) => {
   try {
     const product = await Product.findById(id).populate("category");
     if (!product)
-      return res.status(404).json({ error: "Produkt hittades inte" });
+      return res.status(404).json({ error: "Produkt hittades inte" })
     res.json(product);
   } catch (error) {
-    res.status(404).json({ error: "Produkt hittades inte" });
+    res.status(404).json({ error: "Produkt hittades inte" })
   }
-});
+})
 
-//Skapa ny produkt (admin)
+// Skapar en ny produkt i databasen.
+// Åtkomst begränsad till administratörer via adminAuth.
+// Returnerar den skapade produkten eller ett felmeddelande.
 router.post("/", adminAuth, async (req, res) => {
   try {
     const product = new Product(req.body);
     await product.save();
     res.status(201).json(product);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ error: error.message })
   }
-});
+})
 
-//Uppdatera produkt (admin)
+// Uppdaterar en befintlig produkt baserat på ID.
+// Endast administratörer har behörighet via adminAuth.
+// Returnerar den uppdaterade produkten eller ett felmeddelande.
 router.put("/:id", adminAuth, async (req, res) => {
   const { id } = req.params;
   try {
@@ -108,27 +102,29 @@ router.put("/:id", adminAuth, async (req, res) => {
       { new: true }
     );
     if (!updatedProduct) {
-      return res.status(404).json({ error: "Kunde inte hitta produkten att uppdatera" });
+      return res.status(404).json({ error: "Kunde inte hitta produkten att uppdatera" })
     }
     res.json(updatedProduct);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ error: error.message })
   }
-});
+})
 
-//Radera produkt (admin)
+// Raderar en produkt baserat på ID.
+// Endast administratörer har behörighet via adminAuth.
+// Returnerar bekräftelse eller ett felmeddelande.
 router.delete("/:id", adminAuth, async (req, res) => {
   const { id } = req.params;
   try {
     const deletedProduct = await Product.findByIdAndDelete(id);
     if (!deletedProduct) {
-      return res.status(404).json({ error: "Produkten hittades inte" });
+      return res.status(404).json({ error: "Produkten hittades inte" })
     }
-    res.json({ message: "Produkt raderad", product: deletedProduct });
+    res.json({ message: "Produkt raderad", product: deletedProduct })
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message })
   }
-});
+})
 
 
 
