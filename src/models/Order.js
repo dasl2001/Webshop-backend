@@ -6,7 +6,7 @@ const orderSchema = new mongoose.Schema({
   phone: { type: String, required: true },
   total: { type: Number, required: true },
 
-//Produkterna i beställningen
+  //Produkter som ingår i beställningen
   items: [
     {
       product: { type: mongoose.Schema.Types.ObjectId, ref: "Product", required: true },
@@ -17,4 +17,5 @@ const orderSchema = new mongoose.Schema({
 
 const Order = mongoose.model("Order", orderSchema);
 export default Order;
+
 

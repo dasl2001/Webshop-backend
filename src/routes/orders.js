@@ -5,12 +5,11 @@ import { adminAuth } from "../middleware/auth.js";
 const router = express.Router();
 
 /*
-POST – Ny beställning 
+POST – Ny beställning (öppen för alla)
 */
 router.post("/", async (req, res) => {
   const { name, address, phone, total, items } = req.body;
 
-  // Kontrollera att allt finns
   if (!name || !address || !phone || !total || !items || items.length === 0) {
     return res.status(400).json({ error: "Alla fält krävs och minst 1 produkt" });
   }
@@ -23,13 +22,13 @@ router.post("/", async (req, res) => {
       message: `Beställningen är mottagen. Swisha ${total} kr till 123 456.`,
       orderId: newOrder._id,
     });
-  } catch (error) {
+  } catch {
     res.status(500).json({ error: "Kunde inte spara beställningen" });
   }
 });
 
 /*
-ADMIN – Dagens beställningar plus produkter
+ADMIN – Dagens beställningar med produkter
 */
 router.get("/admin/today", adminAuth, async (req, res) => {
   try {
@@ -41,8 +40,8 @@ router.get("/admin/today", adminAuth, async (req, res) => {
     const todaysOrders = await Order.find({
       createdAt: { $gte: today, $lt: tomorrow }
     })
-    .populate("items.product")
-    .sort({ createdAt: -1 });
+      .populate("items.product")
+      .sort({ createdAt: -1 });
 
     res.json({
       date: today.toISOString().split("T")[0],
@@ -55,7 +54,19 @@ router.get("/admin/today", adminAuth, async (req, res) => {
 });
 
 /*
-ADMIN – En specifik order plus produkter
+ADMIN – Alla beställningar med produkter
+*/
+router.get("/", adminAuth, async (req, res) => {
+  try {
+    const orders = await Order.find().populate("items.product").sort({ createdAt: -1 });
+    res.json(orders);
+  } catch {
+    res.status(500).json({ error: "Kunde inte hämta beställningar" });
+  }
+});
+
+/*
+ADMIN – En specifik order med produkter
 */
 router.get("/admin/:id", adminAuth, async (req, res) => {
   try {
@@ -68,19 +79,7 @@ router.get("/admin/:id", adminAuth, async (req, res) => {
 });
 
 /*
-ADMIN – Alla beställningar plus produkter
-*/
-router.get("/", adminAuth, async (req, res) => {
-  try {
-    const orders = await Order.find().populate("items.product").sort({ createdAt: -1 });
-    res.json(orders);
-  } catch {
-    res.status(500).json({ error: "Kunde inte hämta beställningar" });
-  }
-});
-
-/*
-Vanlig användare hämtar sin order
+Vanlig användare hämta order via id
 */
 router.get("/:id", async (req, res) => {
   try {
@@ -93,6 +92,7 @@ router.get("/:id", async (req, res) => {
 });
 
 export default router;
+
 
 
 
