@@ -6,16 +6,32 @@ const orderSchema = new mongoose.Schema({
   phone: { type: String, required: true },
   total: { type: Number, required: true },
 
-  //Produkter som ingår i beställningen
+  // Nytt fält för status
+  status: {
+    type: String,
+    enum: ["mottagen", "under behandling", "skickad", "levererad"],
+    default: "under behandling",
+  },
+
+  // Produkter i beställningen
   items: [
     {
-      product: { type: mongoose.Schema.Types.ObjectId, ref: "Product", required: true },
-      quantity: { type: Number, required: true, default: 1 },
-    }
-  ]
+      product: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+        required: true,
+      },
+      quantity: {
+        type: Number,
+        required: true,
+        default: 1,
+      },
+    },
+  ],
 }, { timestamps: true });
 
 const Order = mongoose.model("Order", orderSchema);
 export default Order;
+
 
 
