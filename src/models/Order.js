@@ -6,13 +6,15 @@ const orderSchema = new mongoose.Schema({
   phone: { type: String, required: true },
   total: { type: Number, required: true },
 
-  //Koppling till användare som gjort beställningen
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: false
-  }
+//Produkterna i beställningen
+  items: [
+    {
+      product: { type: mongoose.Schema.Types.ObjectId, ref: "Product", required: true },
+      quantity: { type: Number, required: true, default: 1 },
+    }
+  ]
 }, { timestamps: true });
 
 const Order = mongoose.model("Order", orderSchema);
 export default Order;
+
