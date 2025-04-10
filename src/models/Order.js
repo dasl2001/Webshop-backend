@@ -15,7 +15,7 @@ const orderSchema = new mongoose.Schema({
 
   status: {
     type: String,
-    enum: ["mottagen", "under behandling", "skickad", "leverad"],
+    enum: ["mottagen", "under behandling", "skickad", "levererad"],
     default: "under behandling"
   }
 }, { timestamps: true });
