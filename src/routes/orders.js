@@ -60,7 +60,7 @@ router.get("/admin/today", adminAuth, async (req, res) => {
 router.put("/admin/:id/status", adminAuth, async (req, res) => {
   const { status } = req.body;
 
-  if (!["under behandling", "skickad", "mottagen"].includes(status)) {
+  if (!["mottagen", "under behandling", "skickad", "levererad"].includes(status)) {
     return res.status(400).json({ error: "Felaktig status" });
   }
 
