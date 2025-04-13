@@ -127,7 +127,6 @@ router.delete("/:id", adminAuth, async (req, res) => {
 })
 
 
-
 //Admin – Lista alla produkter
 router.get("/admin/all", adminAuth, async (req, res) => {
   try {
