@@ -44,7 +44,9 @@ router.delete("/:id", adminAuth, async (req, res) => {
   try {
     const categoryId = req.params.id;
 
-    //Kontrollera om det finns produkter kopplade till denna kategori
+/*
+Kontrollera om det finns produkter kopplade till denna kategori
+*/
     const productCount = await Product.countDocuments({ category: categoryId });
 
     if (productCount > 0) {
@@ -72,12 +74,16 @@ router.get("/", async (req, res) => {
   try {
     const { name } = req.query;
 
-    //Om name finns men är tomt
+/*
+Om namn finns men är tomt
+*/
     if (typeof name === "string" && name.trim() === "") {
       return res.status(400).json({ error: "Sökterm får inte vara tom" });
     }
 
-    //Om name finns (hämta kategori och dess produkter)
+/*
+Om namn finns (hämta kategori och dess produkter)
+*/
     if (typeof name === "string") {
       const category = await Category.findOne({
         name: { $regex: new RegExp(name, "i") }
@@ -92,7 +98,9 @@ router.get("/", async (req, res) => {
       return res.json({ category, products });
     }
 
-    //Ingen name-sökning (hämta alla kategorier)
+/*
+Ingen namn-sökning (hämta alla kategorier)
+*/
     const categories = await Category.find();
     res.json(categories);
   } catch (error) {
@@ -100,7 +108,9 @@ router.get("/", async (req, res) => {
   }
 })
 
-// Hämta en specifik kategori (öppen för alla)
+/*
+Hämta en specifik kategori (öppen för alla)
+*/
 router.get("/:id", async (req, res) => {
   try {
     const category = await Category.findById(req.params.id)

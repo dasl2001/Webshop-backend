@@ -7,13 +7,17 @@ import { adminAuth } from "../middleware/auth.js";
 const router = express.Router()
 
 
-//Avancerad sökning: q = namn, beskrivning, kategori + prisintervall
+/*
+Avancerad sökning: q = namn, beskrivning, kategori + prisintervall
+*/
 router.get("/search", async (req, res) => {
   const { q, minPrice, maxPrice, sortBy = "name", order = "asc" } = req.query;
 
   const filter = {}
 
-  //Textsökning i namn, beskrivning eller kategori-namn
+/*
+Textsökning i namn, beskrivning eller kategori-namn
+*/
   let categoryMatch = null;
 
   if (q) {
@@ -54,7 +58,9 @@ router.get("/search", async (req, res) => {
   }
 })
 
-//Enkel sökning via ?name=
+/*
+Enkel sökning via ?name=
+*/
 router.get("/", async (req, res) => {
   try {
     const products = await Product.find().populate("category")
@@ -64,7 +70,9 @@ router.get("/", async (req, res) => {
   }
 })
 
-//Hämta produkt via ID
+/*
+Hämta produkt via ID
+*/
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
   try {
@@ -77,9 +85,11 @@ router.get("/:id", async (req, res) => {
   }
 })
 
-// Skapar en ny produkt i databasen.
-// Åtkomst begränsad till administratörer via adminAuth.
-// Returnerar den skapade produkten eller ett felmeddelande.
+/*
+Skapar en ny produkt i databasen
+Åtkomst begränsad till administratörer via adminAuth
+Returnerar den skapade produkten eller ett felmeddelande
+*/
 router.post("/", adminAuth, async (req, res) => {
   try {
     const product = new Product(req.body);
@@ -90,9 +100,11 @@ router.post("/", adminAuth, async (req, res) => {
   }
 })
 
-// Uppdaterar en befintlig produkt baserat på ID.
-// Endast administratörer har behörighet via adminAuth.
-// Returnerar den uppdaterade produkten eller ett felmeddelande.
+/*
+Uppdaterar en befintlig produkt baserat på ID.
+Endast administratörer har behörighet via adminAuth.
+Returnerar den uppdaterade produkten eller ett felmeddelande.
+*/
 router.put("/:id", adminAuth, async (req, res) => {
   const { id } = req.params;
   try {
@@ -110,9 +122,11 @@ router.put("/:id", adminAuth, async (req, res) => {
   }
 })
 
-// Raderar en produkt baserat på ID.
-// Endast administratörer har behörighet via adminAuth.
-// Returnerar bekräftelse eller ett felmeddelande.
+/*
+Raderar en produkt baserat på ID.
+Endast administratörer har behörighet via adminAuth.
+Returnerar bekräftelse eller ett felmeddelande.
+*/
 router.delete("/:id", adminAuth, async (req, res) => {
   const { id } = req.params;
   try {
@@ -126,8 +140,9 @@ router.delete("/:id", adminAuth, async (req, res) => {
   }
 })
 
-
-//Admin – Lista alla produkter
+/*
+Admin – Lista alla produkter
+*/
 router.get("/admin/all", adminAuth, async (req, res) => {
   try {
     const products = await Product.find().populate("category");
@@ -137,7 +152,9 @@ router.get("/admin/all", adminAuth, async (req, res) => {
   }
 });
 
-//Admin – Sök via namn
+/*
+Admin – Sök via namn
+*/
 router.get("/admin/search-name", adminAuth, async (req, res) => {
   try {
     const { name } = req.query;
@@ -157,7 +174,9 @@ router.get("/admin/search-name", adminAuth, async (req, res) => {
   }
 });
 
-//Admin – Hämta produkt via ID
+/*
+Admin – Hämta produkt via ID
+*/
 router.get("/admin/product/:id", adminAuth, async (req, res) => {
   try {
     const product = await Product.findById(req.params.id).populate("category");

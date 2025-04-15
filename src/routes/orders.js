@@ -5,7 +5,10 @@ import { adminAuth } from "../middleware/auth.js";
 
 const router = express.Router();
 
-// Skapa ny beställning (öppen för alla)
+/*
+Skapa ny beställning (öppen för alla)
+*/
+
 router.post("/", async (req, res) => {
   const { name, address, phone, items } = req.body;
 
@@ -34,7 +37,9 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Admin dagens beställningar
+/*
+Admin dagens beställningar
+*/
 router.get("/admin/today", adminAuth, async (req, res) => {
   try {
     const today = new Date();
@@ -56,7 +61,8 @@ router.get("/admin/today", adminAuth, async (req, res) => {
   }
 });
 
-// Admin uppdatera status
+/*Admin uppdatera status
+*/
 router.put("/admin/:id/status", adminAuth, async (req, res) => {
   const { status } = req.body;
 
@@ -79,7 +85,9 @@ router.put("/admin/:id/status", adminAuth, async (req, res) => {
   }
 });
 
-// Admin alla beställningar
+/*
+Admin alla beställningar
+*/
 router.get("/", adminAuth, async (req, res) => {
   try {
     const orders = await Order.find().populate("items.product").sort({ createdAt: -1 });
@@ -89,7 +97,9 @@ router.get("/", adminAuth, async (req, res) => {
   }
 });
 
-// Admin specifik order
+/*
+Admin specifik order
+*/
 router.get("/admin/:id", adminAuth, async (req, res) => {
   try {
     const order = await Order.findById(req.params.id).populate("items.product");
@@ -100,7 +110,9 @@ router.get("/admin/:id", adminAuth, async (req, res) => {
   }
 });
 
-//Användare kan se sin order 
+/*
+Användare kan se sin order 
+*/
 router.get("/:id", async (req, res) => {
   try {
     const order = await Order.findById(req.params.id).populate("items.product");
@@ -110,23 +122,6 @@ router.get("/:id", async (req, res) => {
     res.status(500).json({ error: "Fel vid hämtning av order" });
   }
 });
-
-// Admin arkivera order
-router.put("/admin/:id/archive", adminAuth, async (req, res) => {
-    try {
-      const order = await Order.findById(req.params.id);
-      if (!order) {
-        return res.status(404).json({ error: "Order hittades inte" });
-      }
-  
-      order.archived = true; // Lägg till archived-flaggan
-      await order.save();
-  
-      res.json({ message: "Order arkiverad" });
-    } catch {
-      res.status(500).json({ error: "Kunde inte arkivera order" });
-    }
-  });
 
 export default router;
 

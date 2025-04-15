@@ -56,7 +56,9 @@ router.post("/login", async (req, res) => {
       return res.status(403).json({ error: "Otillräckliga rättigheter" });
     }
 
-    //Uppdatera senaste inloggning
+/*
+    Uppdatera senaste inloggning
+*/
     user.lastLogin = new Date();
     await user.save();
 
@@ -101,12 +103,16 @@ router.post("/login-user", async (req, res) => {
       return res.status(401).json({ error: "Fel användarnamn eller lösenord" });
     }
 
-    //Blockera admin från att logga in via denna route
+/*
+Blockera admin från att logga in via denna route
+*/
     if (user.admin) {
       return res.status(403).json({ error: "Endast vanliga användare har åtkomst här" });
     }
 
-    //Uppdatera senaste inloggning
+/*
+Uppdatera senaste inloggning
+*/
     user.lastLogin = new Date();
     await user.save();
 
