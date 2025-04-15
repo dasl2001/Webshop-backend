@@ -111,6 +111,23 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// Admin arkivera order
+router.put("/admin/:id/archive", adminAuth, async (req, res) => {
+    try {
+      const order = await Order.findById(req.params.id);
+      if (!order) {
+        return res.status(404).json({ error: "Order hittades inte" });
+      }
+  
+      order.archived = true; // Lägg till archived-flaggan
+      await order.save();
+  
+      res.json({ message: "Order arkiverad" });
+    } catch {
+      res.status(500).json({ error: "Kunde inte arkivera order" });
+    }
+  });
+
 export default router;
 
 

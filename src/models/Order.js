@@ -17,7 +17,13 @@ const orderSchema = new mongoose.Schema({
     type: String,
     enum: ["mottagen", "under behandling", "skickad", "levererad"],
     default: "under behandling"
-  }
+  },
+
+  archived: {
+    type: Boolean,
+    default: false,
+  },
+  
 }, { timestamps: true });
 
 const Order = mongoose.model("Order", orderSchema);
