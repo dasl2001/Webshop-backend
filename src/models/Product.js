@@ -1,113 +1,130 @@
 /*
- Importerar Mongoose
+Importera mongoose för att skapa ett schema som kopplas till MongoDB
 */
 import mongoose from "mongoose";
 
 /*
-Schema-definition
+Skapa ett schema för produkter
 */
-const productSchema = new mongoose.Schema(
-  {
+const productSchema = new mongoose.Schema({
 
 /*
-Måste anges (required)
-trim tar bort onödiga mellanslag före/efter
+Namn på produkten (obligatoriskt och tas bort extra mellanslag)
 */
-    name: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-
-/*
-Krävs och får inte vara negativt
-*/
-    price: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
-
-/*
-Valfritt fält, men om det inte anges blir det en tom sträng
-*/
-    description: {
-      type: String,
-      default: "",
-    },
-
-/*
-Lagerantal – kan inte vara negativt
-Om inget anges blir det 0
-*/
-    stock: {
-      type: Number,
-      default: 0,
-      min: 0,
-    },
-
-/*
-Denna produkt måste tillhöra en kategori
-Refererar till Category-modellen (via ObjectId)
-Gör det möjligt att använda .populate("category") för att hämta all info om kategorin
-*/
-    category: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Category",
-      required: true,
-    },
-
-/*
-Länk till produktbild
-*/
-    imageUrl: {
-      type: String,
-      required: true,
-    },
-
-    jämförpris: {
-      type: String,
-      default: "",
-    },
-
-    innehållsförteckning: {
-      type: String,
-      default: "",
-    },
-
-    näringsvärde: {
-      type: String,
-      default: "",
-    },
-
-    leverantör: {
-      type: String,
-      default: "",
-    },
-
-    varumärke: {
-      type: String,
-      default: "",
-    },
-
-    ursprungsland: {
-      type: String,
-      default: "",
-    },
+  name: {
+    type: String,
+    required: true,
+    trim: true,
   },
 
 /*
-Lägger automatiskt till createdAt och updatedAt – perfekt för att visa senaste uppdatering
+Pris på produkten (obligatoriskt och kan inte vara negativt)
 */
-  { timestamps: true }
+  price: {
+    type: Number,
+    required: true,
+    min: 0,
+  },
+
+/*
+En kort beskrivning av produkten (valfritt)
+*/
+  description: {
+    type: String,
+    default: "",
+  },
+
+/*
+Antal i lager (standard är 0, får inte vara negativt)
+*/
+  stock: {
+    type: Number,
+    default: 0,
+    min: 0,
+  },
+
+/*
+Vilken kategori produkten tillhör (måste finnas och refererar till kategori-modellen)
+*/
+  category: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Category",
+    required: true,
+  },
+
+/*
+Länk till produktens bild (obligatoriskt)
+*/
+  imageUrl: {
+    type: String,
+    required: true,
+  },
+
+/*
+Jämförelsepris, t.ex. "10 kr/kg" (valfritt)
+*/
+  comparePrice: {
+    type: String,
+    default: "",
+  },
+
+/*
+Ingredienser (valfritt)
+*/
+  ingredients: {
+    type: String,
+    default: "",
+  },
+
+/*
+Näringsinformation (valfritt)
+*/
+  nutrition: {
+    type: String,
+    default: "",
+  },
+
+/*
+Leverantörens namn (valfritt)
+*/
+  supplier: {
+    type: String,
+    default: "",
+  },
+
+/*
+Varumärke (valfritt)
+*/
+  brand: {
+    type: String,
+    default: "",
+  },
+
+ /*
+ Ursprungsland (valfritt)
+ */
+  originCountry: {
+    type: String,
+    default: "",
+  },
+},
+
+/*
+Lägger till createdAt och updatedAt automatiskt
+*/
+{ timestamps: true }
 );
 
 /*
-Registrerar modellen som "Product"
-Exporterar den för användning i routes/controllers
+Skapa en modell baserat på schemat ovan
 */
 const Product = mongoose.model("Product", productSchema);
+
+/*
+Exportera modellen så den kan användas i andra filer
+*/
 export default Product;
+
 
 
 
