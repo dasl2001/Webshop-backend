@@ -1,5 +1,5 @@
 ## Uppgiftsbeskrivning
-Projektet går ut på att skapa backend till en webbshop för Hakim Livs. Backend hanterar produkter, kategorier, beställningar och användare samt administratörsfunktioner. -S - Syftet är att visa kunskaper i:
+Projektet går ut på att skapa backend till en webbshop för Hakim Livs. Backend hanterar produkter, kategorier, beställningar och användare samt administratörsfunktioner. Syftet är att visa kunskaper i:
 - Strukturering av API-tjänster.
 - Säker autentisering och skyddade rutter.
 - Modellering och lagring i en NoSQL-databas.
@@ -26,15 +26,15 @@ Projektet går ut på att skapa backend till en webbshop för Hakim Livs. Backen
 
 ## Kom igång
 **Klona projektet**:
-git clone https://github.com/dasl2001/Webshop-backend.git
-cd Webshop-backend
+- git clone https://github.com/dasl2001/Webshop-backend.git
+- cd Webshop-backend
 **Installera beroenden**:
-npm install
+- npm install
 **Skapa .env-fil**:
-MONGODB_URI=din-mongodb-länk
-JWT_SECRET=hemligkod123
-PORT=3000
+- MONGODB_URI=din-mongodb-länk
+- JWT_SECRET=hemligkod123
+- PORT=3000
 **Starta servern**:
-npm start
+- npm start
 
 
