@@ -1,15 +1,5 @@
 [
     {
-      "_id": "67e5c040a3bdb57490fcd5d6",
-      "name": "Vita bönor",
-      "price": 31.0,
-      "description": "Vita bönor av märket Sevan, 900g",
-      "stock": 120,
-      "createdAt": "2025-03-27T21:16:48.914+00:00",
-      "updatedAt": "2025-03-28T11:56:48.851+00:00",
-      "imageUrl": "https://sevan.se/storage/EF7D463D3EB12EDB4C81C48E7DD3509D7D1885498340C…"
-    },
-    {
       "_id": "67e54c8d3482d8ab3c96cbbe",
       "name": "Spaghetti",
       "price": 20.0,
