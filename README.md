@@ -1,129 +1,40 @@
-### README
-Webshop 2025 – Backend API-dokumentation
-Base URL:
-https://webshop-2025-be-g10-five.vercel.app
+## Uppgiftsbeskrivning
+Projektet går ut på att skapa backend till en webbshop för Hakim Livs. Backend hanterar produkter, kategorier, beställningar och användare samt administratörsfunktioner. -S - Syftet är att visa kunskaper i:
+- Strukturering av API-tjänster.
+- Säker autentisering och skyddade rutter.
+- Modellering och lagring i en NoSQL-databas.
+- Utveckling för molnbaserad drift.
 
-Autentisering
-POST /api/auth/register
-Registrera en ny användare
-{
-  "name": "Anna",
-  "email": "anna@example.com",
-  "password": "password123"
-}
+## Funktioner
+- Produkt-API (CRUD för produkter).
+- Kategorier (Skapa och hantera produktkategorier).
+- Beställningar (Skapa och hämta ordrar).
+- Användarhantering (jWT-inloggning för användare och admin).
+- Admin-funktioner (Statistik och avancerad hantering via skyddade endpoints).
+- Miljövariabler (Säkert hantera känslig data).
+- Felhantering (Tydliga statuskoder och felmeddelanden).
+- Deploybar (Kan köras både lokalt och på Vercel).
 
-POST /api/auth/login-user
-Logga in som vanlig användare
-{
-  "email": "anna@example.com",
-  "password": "password123"
-}
+## Använda tekniker
+- Node.js
+- Express
+- MongoDB (Atlas)
+- Mongoose
+- JWT 
+- dotenv
+- CORS
 
-POST /api/auth/login
-Logga in som admin
-{
-  "email": "admin@example.com",
-  "password": "adminpassword"
-}
-
-
-Produkter
-GET /api/products
-Hämta alla produkter
-Exempel:
-/api/products?search=chips&category=snacks&min=10&max=50&sort=price
-
-GET /api/products/:id
-Hämta en specifik produkt
-Exempel:
-/api/products/66123456789abc
-
-POST /api/products (Admin)
-Skapa ny produkt
-Header: Authorization: Bearer <admin-token>
-Body:
-{
-  "name": "Saltade chips",
-  "price": 18,
-  "description": "Lay's Classic saltade chips",
-  "stock": 60,
-  "category": "67e5295bb7a26193100f9ad7",
-  "imageUrl": "https://example.com/image.jpg",
-  "brand": "Lay's",
-  "comparePrice": "360 kr/kg",
-  "ingredients": "Potatis, solrosolja, salt",
-  "nutrition": "Energi 524 kcal",
-  "originCountry": "Nederländerna",
-  "supplier": "PepsiCo Nordic AB"
-}
-
-PUT /api/products/:id (Admin)
-Uppdatera en produkt
-
-DELETE /api/products/:id (Admin)
-Ta bort en produkt
-
-
-Kategorier
-GET /api/categories
-Hämta alla kategorier
-Exempel:
-/api/categories?name=skafferi
-
-POST /api/categories (Admin)
-Skapa en ny kategori
-{
-  "name": "dryck"
-}
-
-
-Ordrar
-GET /api/orders (Inloggad användare / Admin)
-Vanlig användare får sina egna ordrar
-
-Admin får alla ordrar
-Header: Authorization: Bearer <token>
-
-GET /api/orders/:id
-Hämta en specifik order
-
-POST /api/orders (Inloggad användare)
-Skapa en ny order
-Body:
-{
-  "products": [
-    { "productId": "66123456789abc", "quantity": 2 }
-  ],
-  "totalPrice": 36
-}
-
-
-Användare
-GET /api/users (Admin)
-Hämta alla användare
-
-GET /api/users/:id
-Hämta information om en specifik användare
-
-
-Övrig info
-Statuskoder
-200	OK
-201	Created
-400	Bad Request
-401	Unauthorized (ej inloggad)
-403	Forbidden (ingen behörighet)
-404	Not Found
-500	Serverfel
-
-
-Miljövariabler
-Skapa en .env-fil med följande:
-PORT=3000
-MONGODB_URI=mongodb+srv://...
-JWT_SECRET=din-hemliga-nyckel
-
-
-Starta servern
+## Kom igång
+**Klona projektet**:
+git clone https://github.com/dasl2001/Webshop-backend.git
+cd Webshop-backend
+**Installera beroenden**:
 npm install
-npm run dev
+**Skapa .env-fil**:
+MONGODB_URI=din-mongodb-länk
+JWT_SECRET=hemligkod123
+PORT=3000
+**Starta servern**:
+npm start
+
+
