@@ -9,7 +9,7 @@ Projektet går ut på att skapa backend till en webbshop för Hakim Livs. Backen
 - Produkt-API (CRUD för produkter).
 - Kategorier (Skapa och hantera produktkategorier).
 - Beställningar (Skapa och hämta ordrar).
-- Användarhantering (jWT-inloggning för användare och admin).
+- Användarhantering (JWT-inloggning för användare och admin).
 - Admin-funktioner (Statistik och avancerad hantering via skyddade endpoints).
 - Miljövariabler (Säkert hantera känslig data).
 - Felhantering (Tydliga statuskoder och felmeddelanden).
@@ -24,17 +24,5 @@ Projektet går ut på att skapa backend till en webbshop för Hakim Livs. Backen
 - dotenv
 - CORS
 
-## Kom igång
-**Klona projektet**:
-- git clone https://github.com/dasl2001/Webshop-backend.git
-- cd Webshop-backend
-**Installera beroenden**:
-- npm install
-**Skapa .env-fil**:
-- MONGODB_URI=din-mongodb-länk
-- JWT_SECRET=hemligkod123
-- PORT=3000
-**Starta servern**:
-- npm start
 
 
