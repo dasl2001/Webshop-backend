@@ -1,4 +1,5 @@
-export default {
+export default 
+{
   transform: {
     "^.+\\.js$": "babel-jest"
   },
