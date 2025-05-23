@@ -16,14 +16,5 @@
         "createdAt": "2025-03-27T10:32:25.971+00:00",
         "updatedAt": "2025-03-27T10:32:25.971+00:00",
         "__v": "0"
-    },
-    {
-        "_id": "67e5295bb7a26193100f9ad7",
-        "name": "Snacks & godis",
-        "description": "Alla typer av snacks och godis",
-        "type": "Snacks och godis",
-        "createdAt": "2025-03-27T10:32:59.400+00:00",
-        "updatedAt": "2025-03-27T10:32:59.400+00:00",
-        "__v": "0" 
     }
 ]
