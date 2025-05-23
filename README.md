@@ -1,5 +1,7 @@
 ## Uppgiftsbeskrivning
-Projektet går ut på att skapa backend till en webbshop för Hakim Livs. Backend hanterar produkter, kategorier, beställningar och användare samt administratörsfunktioner. Syftet är att visa kunskaper i:
+Projektet går ut på att skapa backend till en webbshop för Hakim Livs. Backend hanterar produkter, kategorier, beställningar och användare samt administratörsfunktioner. 
+
+## Kunskaper
 - Strukturering av API-tjänster.
 - Säker autentisering och skyddade rutter.
 - Modellering och lagring i en NoSQL-databas.
