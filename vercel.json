@@ -11,5 +11,4 @@
       "src": "/api/(.*)",
       "dest": "src/server.js"
     }
-  ]
-}
+  ]}
