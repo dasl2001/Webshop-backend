@@ -4,7 +4,7 @@ export default
     "^.+\\.js$": "babel-jest"
   },
   testEnvironment: "node",
-  verbose: true,
+  verbose: true, 
   roots: ["<rootDir>/src"]
 };
 
