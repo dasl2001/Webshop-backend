@@ -2,7 +2,7 @@ import express from "express";
 import Category from "../models/Category.js";
 import Product from "../models/Product.js";
 import { adminAuth } from "../middleware/auth.js";
-const router = express.Router();
+const router = express.Router(); 
 router.post("/", adminAuth, async (req, res) => {
   try {
     const newCategory = new Category(req.body);
