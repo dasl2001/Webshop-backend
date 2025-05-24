@@ -4,7 +4,7 @@ import Product from "../models/Product.js";
 import Category from "../models/Category.js";
 import Order from "../models/Order.js"; 
 import { adminAuth } from "../middleware/auth.js";
-const router = express.Router();
+const router = express.Router(); 
 router.get("/search", async (req, res) => {
   const { q, minPrice, maxPrice, sortBy = "name", order = "asc" } = req.query;
   const filter = {};
