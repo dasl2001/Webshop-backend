@@ -2,7 +2,7 @@ import express from "express";
 import Order from "../models/Order.js";
 import Product from "../models/Product.js";
 import { adminAuth } from "../middleware/auth.js";
-const router = express.Router();
+const router = express.Router(); 
 router.post("/", async (req, res) => {
   const { name, address, phone, items } = req.body;
   if (!name || !address || !phone || !items || items.length === 0) {
