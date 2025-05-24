@@ -5,7 +5,7 @@ const orderSchema = new mongoose.Schema({
   phone: { type: String, required: true },
   total: { type: Number }, 
   items: [
-    {
+    { 
       product: { type: mongoose.Schema.Types.ObjectId, ref: "Product", required: true },
       quantity: { type: Number, required: true, default: 1 },
     }
