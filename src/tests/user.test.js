@@ -3,7 +3,7 @@ import { MongoMemoryServer } from "mongodb-memory-server";
 import bcrypt from "bcrypt";
 import User from "../models/User.js"; 
 let mongo;
-beforeAll(async () => {
+beforeAll(async () => { 
   mongo = await MongoMemoryServer.create();
   const uri = mongo.getUri();
   await mongoose.connect(uri);
