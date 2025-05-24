@@ -4,7 +4,7 @@ import Product from "../models/Product.js";
 import Category from "../models/Category.js";
 jest.setTimeout(10000); 
 let mongo;
-beforeAll(async () => {
+beforeAll(async () => { 
   mongo = await MongoMemoryServer.create();
   await mongoose.connect(mongo.getUri(), {
     useNewUrlParser: true,
